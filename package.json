@@ -1,0 +1,29 @@
+{
+  "name": "nordic-spirit-backend-api",
+  "version": "1.0.0",
+  "description": "Backend written with nodeJS and express + typescript",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "node-pg-migrate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nordic-Spirit/nordic-spirit-backend-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nordic-Spirit/nordic-spirit-backend-api/issues"
+  },
+  "homepage": "https://github.com/Nordic-Spirit/nordic-spirit-backend-api#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "pg": "^8.7.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.6.1",
+    "node-pg-migrate": "^5.10.0"
+  }
+}
