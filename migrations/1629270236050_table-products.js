@@ -28,6 +28,5 @@ exports.up = pgm => {
 exports.down = pgm => {
   pgm.sql(`
     DROP TABLE products;
-    DROP INDEX products_on_sale_idx;
   `);
 };
