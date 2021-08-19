@@ -3,7 +3,10 @@ import { CustomError } from '../errors/CustomError';
 import { ErrorNames } from '../errors/ErrorNames';
 
 export class ModelRepo {
-  static async query(sql: string, params?: any[] | undefined) {
+  async query<T>(
+    sql: string,
+    params?: any[] | undefined
+  ): Promise<CustomError | T[]> {
     const client = await pool.connect();
 
     return pool

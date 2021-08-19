@@ -17,7 +17,7 @@ const pool_1 = __importDefault(require("../config/pool"));
 const CustomError_1 = require("../errors/CustomError");
 const ErrorNames_1 = require("../errors/ErrorNames");
 class ModelRepo {
-    static query(sql, params) {
+    query(sql, params) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = yield pool_1.default.connect();
             return pool_1.default

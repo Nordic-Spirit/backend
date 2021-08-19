@@ -1,22 +1,33 @@
-import pool from '../config/pool';
 import { ModelRepo } from './ModelRepo';
-export class ProductRepo extends ModelRepo {
-  static async findAll(): Promise<any> {
-    const client = await pool.connect();
 
-    const { rows } = await pool.query(`
-      SELECT * FROM products;
+export interface MainpageProducts {
+  id: number;
+  name: string;
+  url: string;
+  price: number;
+}
+
+export class ProductRepo extends ModelRepo {
+  async findAll(): Promise<any> {
+    const result = await this.query(`
+      SELECT *
+      FROM products
+      ORDER BY created_at DESC
+      LIMIT 20
     `);
 
-    client.release();
-
-    return 'Toimii';
+    return result;
   }
 
-  static async findLatest(): Promise<any> {
-    const result = await this.query(`
-      SELECT created_at
+  async findLatest(): Promise<any> {
+    const result = await this.query<MainpageProducts>(`
+      SELECT
+        id,
+        name,
+        url,
+        price
       FROM products
+      WHERE on_sale = TRUE
       ORDER BY created_at DESC
       LIMIT 10;
     `);
