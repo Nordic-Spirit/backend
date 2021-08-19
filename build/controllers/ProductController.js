@@ -20,12 +20,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorators_1 = require("./decorators");
 const repos_1 = require("../repos");
+const CustomError_1 = require("../errors/CustomError");
 let ProductController = class ProductController {
     getProducts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const x = yield repos_1.ProductRepo.findAll();
-            console.log(x);
-            res.send('ss');
+            const y = yield repos_1.ProductRepo.findAll();
+            res.send(y);
+        });
+    }
+    getLatest(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield repos_1.ProductRepo.findLatest();
+            if (result instanceof CustomError_1.CustomError) {
+                const { name, message, responseCode } = result;
+                return res.status(responseCode).send({ name, message });
+            }
+            res.status(200).send(result);
         });
     }
 };
@@ -35,6 +45,12 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getProducts", null);
+__decorate([
+    decorators_1.get('/latest'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getLatest", null);
 ProductController = __decorate([
     decorators_1.controller('/products')
 ], ProductController);

@@ -12,30 +12,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductRepo = void 0;
+exports.ModelRepo = void 0;
 const pool_1 = __importDefault(require("../config/pool"));
-const ModelRepo_1 = require("./ModelRepo");
-class ProductRepo extends ModelRepo_1.ModelRepo {
-    static findAll() {
+const CustomError_1 = require("../errors/CustomError");
+const ErrorNames_1 = require("../errors/ErrorNames");
+class ModelRepo {
+    static query(sql, params) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = yield pool_1.default.connect();
-            const { rows } = yield pool_1.default.query(`
-      SELECT * FROM products;
-    `);
-            client.release();
-            return 'Toimii';
-        });
-    }
-    static findLatest() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.query(`
-      SELECT created_at
-      FROM products
-      ORDER BY created_at DESC
-      LIMIT 10;
-    `);
-            return result;
+            return pool_1.default
+                .query(sql, params)
+                .then(({ rows }) => {
+                return rows;
+            })
+                .catch(err => {
+                return new CustomError_1.CustomError(err.message, ErrorNames_1.ErrorNames.databaseError, 422);
+            })
+                .finally(() => {
+                client.release();
+            });
         });
     }
 }
-exports.ProductRepo = ProductRepo;
+exports.ModelRepo = ModelRepo;
