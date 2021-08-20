@@ -20,10 +20,10 @@ class ModelRepo {
     query(sql, params) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = yield pool_1.default.connect();
-            return pool_1.default
+            const result = pool_1.default
                 .query(sql, params)
                 .then(({ rows }) => {
-                return rows;
+                return this.toCamelCase(rows);
             })
                 .catch(err => {
                 return new CustomError_1.CustomError(err.message, ErrorNames_1.ErrorNames.databaseError, 422);
@@ -31,6 +31,19 @@ class ModelRepo {
                 .finally(() => {
                 client.release();
             });
+            return result;
+        });
+    }
+    toCamelCase(rows) {
+        return rows.map((row) => {
+            const replaced = {};
+            for (let key in row) {
+                const camelCase = key.replace(/([-_][a-z])/gi, $1 => {
+                    return $1.toUpperCase().replace('_', '');
+                });
+                replaced[camelCase] = row[key];
+            }
+            return replaced;
         });
     }
 }

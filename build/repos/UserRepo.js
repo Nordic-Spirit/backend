@@ -1,12 +1,7 @@
 "use strict";
-// import { ModelRepo } from './ModelRepo';
-// export class UserRepo extends ModelRepo {
-//   static async findAll(): Promise<string> {
-//     const client = await pool.connect();
-//     const { rows } = await pool.query(`
-//       SELECT * FROM products;
-//     `);
-//     client.release();
-//     return 'lassi';
-//   }
-// }
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRepo = void 0;
+const ModelRepo_1 = require("./ModelRepo");
+class UserRepo extends ModelRepo_1.ModelRepo {
+}
+exports.UserRepo = UserRepo;

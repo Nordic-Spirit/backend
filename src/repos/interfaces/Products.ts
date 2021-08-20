@@ -3,12 +3,15 @@ export interface ProductProps extends ProductCardProps {
   alcohol: number;
   capacity: number;
   manufacturer: string;
-  country_of_manufacturer: string;
+  countryOfManufacturer: string;
 }
 
 export interface ProductCardProps {
-  id: number;
-  name: string;
+  productId: number;
+  productName: string;
   url: string;
   price: number;
+  categoryId: number;
+  categoryName: string;
+  productCount: number;
 }

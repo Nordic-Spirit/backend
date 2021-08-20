@@ -30,13 +30,21 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
       SELECT
-        id,
-        name,
-        url,
-        price
+        products.id as product_id,
+        products.name as product_name,
+        products.url,
+        products.price,
+        categories.id as categorie_id,
+        categories.name as categorie_name,
+        (
+          SELECT COUNT(*)
+          FROM products_in_storages
+          WHERE products_in_storages.product_id = products.id
+        ) AS product_count
       FROM products
-      WHERE on_sale = TRUE
-      ORDER BY created_at DESC
+      JOIN categories ON categories.id = products.categorie_id
+      WHERE products.on_sale = TRUE
+      ORDER BY products.created_at DESC
       LIMIT 10;
     `);
             return result;

@@ -28,8 +28,8 @@ export class ProductRepo extends ModelRepo {
         (
           SELECT COUNT(*)
           FROM products_in_storages
-          WHERE product_id = products.id
-        )
+          WHERE products_in_storages.product_id = products.id
+        ) AS product_count
       FROM products
       JOIN categories ON categories.id = products.categorie_id
       WHERE products.on_sale = TRUE

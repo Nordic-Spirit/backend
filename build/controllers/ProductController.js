@@ -36,7 +36,7 @@ let ProductController = ProductController_1 = class ProductController {
     getProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const result = yield res.send(req.params);
+            res.send(req.params);
         });
     }
     getLatest(req, res) {
@@ -58,7 +58,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getProducts", null);
 __decorate([
-    decorators_1.get('/:id'),
+    decorators_1.get('/product/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)

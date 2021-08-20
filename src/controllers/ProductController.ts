@@ -20,11 +20,11 @@ class ProductController {
     res.status(200).send(result);
   }
 
-  @get('/:id')
+  @get('/product/:id')
   async getProduct(req: Request, res: Response) {
     const { id } = req.params;
 
-    const result = await res.send(req.params);
+    res.send(req.params);
   }
 
   @get('/latest')
