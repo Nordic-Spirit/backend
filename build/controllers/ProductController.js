@@ -23,19 +23,26 @@ const decorators_1 = require("./decorators");
 const repos_1 = require("../repos");
 const CustomError_1 = require("../errors/CustomError");
 let ProductController = ProductController_1 = class ProductController {
+    // TODO KESKEN
     getProducts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield ProductController_1.repo.find();
             if (result instanceof CustomError_1.CustomError) {
-                const { name, message, responseCode } = result;
-                return res.status(responseCode).send({ name, message });
+                const { name, message, sqlErrorCode, responseCode } = result;
+                return res.status(responseCode).send({ name, message, sqlErrorCode });
             }
             res.status(200).send(result);
         });
     }
+    // TODO KESKEN
     getProduct(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const result = yield ProductController_1.repo.findById(Number(id));
+            if (result instanceof CustomError_1.CustomError) {
+                const { name, message, sqlErrorCode, responseCode } = result;
+                return res.status(responseCode).send({ name, message, sqlErrorCode });
+            }
             res.send(req.params);
         });
     }
@@ -43,8 +50,18 @@ let ProductController = ProductController_1 = class ProductController {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield ProductController_1.repo.findLatest();
             if (result instanceof CustomError_1.CustomError) {
-                const { name, message, responseCode } = result;
-                return res.status(responseCode).send({ name, message });
+                const { name, message, sqlErrorCode, responseCode } = result;
+                return res.status(responseCode).send({ name, message, sqlErrorCode });
+            }
+            res.status(200).send(result);
+        });
+    }
+    getMostPopular(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield ProductController_1.repo.findMostPopulars();
+            if (result instanceof CustomError_1.CustomError) {
+                const { name, message, sqlErrorCode, responseCode } = result;
+                return res.status(responseCode).send({ name, message, sqlErrorCode });
             }
             res.status(200).send(result);
         });
@@ -58,7 +75,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getProducts", null);
 __decorate([
-    decorators_1.get('/product/:id'),
+    decorators_1.get('/single/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
@@ -69,6 +86,12 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getLatest", null);
+__decorate([
+    decorators_1.get('/mostpopular'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getMostPopular", null);
 ProductController = ProductController_1 = __decorate([
     decorators_1.controller('/products')
 ], ProductController);

@@ -12,7 +12,12 @@ export class ModelRepo {
         return this.toCamelCase<T>(rows);
       })
       .catch(err => {
-        return new CustomError(err.message, ErrorNames.databaseError, 422);
+        return new CustomError(
+          err.message,
+          ErrorNames.databaseError,
+          err.code,
+          422
+        );
       })
       .finally(() => {
         client.release();

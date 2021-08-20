@@ -26,7 +26,7 @@ class ModelRepo {
                 return this.toCamelCase(rows);
             })
                 .catch(err => {
-                return new CustomError_1.CustomError(err.message, ErrorNames_1.ErrorNames.databaseError, 422);
+                return new CustomError_1.CustomError(err.message, ErrorNames_1.ErrorNames.databaseError, err.code, 422);
             })
                 .finally(() => {
                 client.release();
