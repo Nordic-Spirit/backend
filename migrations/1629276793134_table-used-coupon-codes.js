@@ -8,7 +8,7 @@ exports.up = pgm => {
       id SERIAL PRIMARY KEY,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       coupon_code_id INTEGER NOT NULL REFERENCES coupon_codes(id) ON DELETE RESTRICT,
-      user_id INTEGER REFERENCES coupon_codes(id) ON DELETE SET NULL
+      user_id INTEGER REFERENCES users(id) ON DELETE SET NULL
     );
   `);
 };

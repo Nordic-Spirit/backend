@@ -1,15 +1,10 @@
 import { ModelRepo } from './ModelRepo';
-
-export interface MainpageProducts {
-  id: number;
-  name: string;
-  url: string;
-  price: number;
-}
+import { CustomError } from '../errors/CustomError';
+import { ProductCardProps, ProductProps } from './interfaces/Products';
 
 export class ProductRepo extends ModelRepo {
-  async findAll(): Promise<any> {
-    const result = await this.query(`
+  async find(): Promise<CustomError | ProductCardProps[]> {
+    const result = await this.query<ProductCardProps>(`
       SELECT *
       FROM products
       ORDER BY created_at DESC
@@ -19,16 +14,26 @@ export class ProductRepo extends ModelRepo {
     return result;
   }
 
+  async findById(): Promise<any> {}
+
   async findLatest(): Promise<any> {
-    const result = await this.query<MainpageProducts>(`
+    const result = await this.query<ProductCardProps>(`
       SELECT
-        id,
-        name,
-        url,
-        price
+        products.id as product_id,
+        products.name as product_name,
+        products.url,
+        products.price,
+        categories.id as categorie_id,
+        categories.name as categorie_name,
+        (
+          SELECT COUNT(*)
+          FROM products_in_storages
+          WHERE product_id = products.id
+        )
       FROM products
-      WHERE on_sale = TRUE
-      ORDER BY created_at DESC
+      JOIN categories ON categories.id = products.categorie_id
+      WHERE products.on_sale = TRUE
+      ORDER BY products.created_at DESC
       LIMIT 10;
     `);
 

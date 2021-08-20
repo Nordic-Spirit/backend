@@ -25,12 +25,18 @@ const CustomError_1 = require("../errors/CustomError");
 let ProductController = ProductController_1 = class ProductController {
     getProducts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield ProductController_1.repo.findAll();
+            const result = yield ProductController_1.repo.find();
             if (result instanceof CustomError_1.CustomError) {
                 const { name, message, responseCode } = result;
                 return res.status(responseCode).send({ name, message });
             }
             res.status(200).send(result);
+        });
+    }
+    getProduct(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const result = yield res.send(req.params);
         });
     }
     getLatest(req, res) {
@@ -46,11 +52,17 @@ let ProductController = ProductController_1 = class ProductController {
 };
 ProductController.repo = new repos_1.ProductRepo();
 __decorate([
-    decorators_1.get('/all'),
+    decorators_1.get('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getProducts", null);
+__decorate([
+    decorators_1.get('/:id'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getProduct", null);
 __decorate([
     decorators_1.get('/latest'),
     __metadata("design:type", Function),

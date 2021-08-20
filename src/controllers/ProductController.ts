@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { controller, get, post } from './decorators';
+import { Request, Response, NextFunction } from 'express';
+import { controller, get, post, use } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
 
@@ -7,9 +7,9 @@ import { CustomError } from '../errors/CustomError';
 class ProductController {
   static repo = new ProductRepo();
 
-  @get('/all')
+  @get('/')
   async getProducts(req: Request, res: Response) {
-    const result = await ProductController.repo.findAll();
+    const result = await ProductController.repo.find();
 
     if (result instanceof CustomError) {
       const { name, message, responseCode } = result;
@@ -18,6 +18,13 @@ class ProductController {
     }
 
     res.status(200).send(result);
+  }
+
+  @get('/:id')
+  async getProduct(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const result = await res.send(req.params);
   }
 
   @get('/latest')

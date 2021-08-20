@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductRepo = void 0;
 const ModelRepo_1 = require("./ModelRepo");
 class ProductRepo extends ModelRepo_1.ModelRepo {
-    findAll() {
+    find() {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
       SELECT *
@@ -22,6 +22,9 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
     `);
             return result;
         });
+    }
+    findById() {
+        return __awaiter(this, void 0, void 0, function* () { });
     }
     findLatest() {
         return __awaiter(this, void 0, void 0, function* () {

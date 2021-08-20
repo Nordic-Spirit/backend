@@ -12,7 +12,7 @@ exports.up = pgm => {
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       paid BOOLEAN NOT NULL DEFAULT FALSE,
       delivery_status DELIVERY_STATUS NOT NULL,
-      product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
       employee_id INTEGER REFERENCES employees(id) ON DELETE RESTRICT
     );
   `);
