@@ -2,75 +2,109 @@ import { Request, Response } from 'express';
 import { controller, get } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
-import { ProductCardProps } from '../repos/interfaces/Products';
+import { CampaignRepo } from '../repos/CampaignRepo';
+import {
+  ProductProps,
+  ProductCardProps,
+  CampaignProps,
+  CampaignDiscount
+} from '../repos/interfaces';
+import { ErrorNames, ErrorResponseCodes } from '../errors';
 
 @controller('/products')
 class ProductController {
-  static repo = new ProductRepo();
+  static productRepo = new ProductRepo();
+  static campaignRepo = new CampaignRepo();
 
   // TODO KESKEN
   @get('/')
-  async getProducts(req: Request, res: Response) {
-    const result = await ProductController.repo.find();
+  getProducts(req: Request, res: Response) {
+    ProductController.productRepo
+      .find()
+      .then(result => {
+        res.status(200).send(result);
+      })
+      .catch(error => {
+        const { name, message, sqlErrorCode } = error;
 
-    if (result instanceof CustomError) {
-      const { name, message, sqlErrorCode, responseCode } = result;
-
-      return res.status(responseCode).send({ name, message, sqlErrorCode });
-    }
-
-    res.status(200).send(result);
+        res
+          .status(ErrorResponseCodes._422)
+          .send({ name, message, sqlErrorCode });
+      });
   }
 
   // TODO KESKEN
   @get('/single/:id')
-  async getProduct(req: Request, res: Response) {
-    const { id } = req.params;
+  getProduct(req: Request, res: Response) {
+    const id = Number(req.params.id);
 
-    const result = await ProductController.repo.findById(Number(id));
+    if (isNaN(id)) {
+      res
+        .status(ErrorResponseCodes._422)
+        .send(
+          new CustomError('Cant handle characters in id', ErrorNames.typeError)
+        );
 
-    if (result instanceof CustomError) {
-      const { name, message, sqlErrorCode, responseCode } = result;
-
-      return res.status(responseCode).send({ name, message, sqlErrorCode });
+      return;
     }
 
-    res.send(req.params);
+    Promise.all<ProductProps[], CampaignDiscount[]>([
+      ProductController.productRepo.findById(id),
+      ProductController.campaignRepo.findByProductId(id)
+    ])
+      .then(result => {
+        const [product, campaign] = result;
+
+        res.status(200).send({
+          product,
+          campaign
+        });
+      })
+      .catch(error => {
+        const { name, message, sqlErrorCode } = error;
+
+        res
+          .status(ErrorResponseCodes._422)
+          .send({ name, message, sqlErrorCode });
+      });
   }
 
   @get('/latest')
-  async getLatest(req: Request, res: Response) {
-    const result = await ProductController.repo.findLatest();
+  getLatest(req: Request, res: Response) {
+    Promise.all<ProductCardProps[], CampaignDiscount[]>([
+      ProductController.productRepo.findLatest(),
+      ProductController.campaignRepo.findDiscounts()
+    ])
+      .then(result => {
+        const [products, discounts] = result;
 
-    if (result instanceof CustomError) {
-      const { name, message, sqlErrorCode, responseCode } = result;
+        res.status(200).send({
+          products,
+          discounts
+        });
+      })
+      .catch(error => {
+        const { name, message, sqlErrorCode } = error;
 
-      return res.status(responseCode).send({ name, message, sqlErrorCode });
-    }
-
-    res.status(200).send(result);
+        res
+          .status(ErrorResponseCodes._422)
+          .send({ name, message, sqlErrorCode });
+      });
   }
 
-  @get('/mostpopular')
-  async getMostPopular(req: Request, res: Response) {
-    const result = await ProductController.repo.findMostPopulars();
+  @get('/mostpopulars')
+  getMostPopular(req: Request, res: Response) {
+    ProductController.productRepo
+      .findMostPopulars()
+      .then(result => {
+        res.status(200).send(result);
+      })
+      .catch(error => {
+        const { name, message, sqlErrorCode } = error;
 
-    if (result instanceof CustomError) {
-      const { name, message, sqlErrorCode, responseCode } = result;
-
-      return res.status(responseCode).send({ name, message, sqlErrorCode });
-    }
-
-    res.status(200).send(result);
+        res
+          .status(ErrorResponseCodes._422)
+          .send({ name, message, sqlErrorCode });
+      });
   }
-
-  // sendResponse<T>(res: Response, result: CustomError | T, successCode: number) {
-  //   if (result instanceof CustomError) {
-  //     const { name, message, sqlErrorCode, responseCode } = result;
-
-  //     return res.status(responseCode).send({ name, message, sqlErrorCode });
-  //   }
-
-  //   res.status(successCode).send(result);
-  // }
 }

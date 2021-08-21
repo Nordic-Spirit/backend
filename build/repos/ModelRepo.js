@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelRepo = void 0;
 const pool_1 = __importDefault(require("../config/pool"));
 const CustomError_1 = require("../errors/CustomError");
-const ErrorNames_1 = require("../errors/ErrorNames");
+const errors_1 = require("../errors");
 class ModelRepo {
     query(sql, params) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,7 +26,7 @@ class ModelRepo {
                 return this.toCamelCase(rows);
             })
                 .catch(err => {
-                return new CustomError_1.CustomError(err.message, ErrorNames_1.ErrorNames.databaseError, err.code, 422);
+                throw new CustomError_1.CustomError(err.message, errors_1.ErrorNames.databaseError, err.code);
             })
                 .finally(() => {
                 client.release();

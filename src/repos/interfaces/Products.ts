@@ -9,8 +9,8 @@ export interface ProductProps extends ProductCardProps {
 export interface ProductCardProps {
   productId: number;
   productName: string;
-  url: string;
-  price: number;
+  productUrl: string;
+  productPrice: number;
   categoryId: number;
   categoryName: string;
   productCount: number;

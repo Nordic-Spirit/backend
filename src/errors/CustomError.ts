@@ -1,11 +1,10 @@
-import { ErrorNames } from './ErrorNames';
+import { ErrorNames } from './';
 
 export class CustomError {
   constructor(
     public message: string,
     public name: ErrorNames,
-    public sqlErrorCode: string,
-    public responseCode: number
+    public sqlErrorCode?: string
   ) {}
 
   log() {
@@ -13,8 +12,7 @@ export class CustomError {
     console.log({
       name: this.name,
       message: this.message,
-      sqlErrorCode: this.sqlErrorCode,
-      responseCode: this.responseCode
+      sqlErrorCode: this.sqlErrorCode
     });
   }
 }

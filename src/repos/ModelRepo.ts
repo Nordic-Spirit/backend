@@ -1,9 +1,9 @@
 import pool from '../config/pool';
 import { CustomError } from '../errors/CustomError';
-import { ErrorNames } from '../errors/ErrorNames';
+import { ErrorNames } from '../errors';
 
 export class ModelRepo {
-  async query<T>(sql: string, params?: any[]): Promise<CustomError | T[]> {
+  async query<T>(sql: string, params?: any[]): Promise<T[]> {
     const client = await pool.connect();
 
     const result = pool
@@ -12,12 +12,7 @@ export class ModelRepo {
         return this.toCamelCase<T>(rows);
       })
       .catch(err => {
-        return new CustomError(
-          err.message,
-          ErrorNames.databaseError,
-          err.code,
-          422
-        );
+        throw new CustomError(err.message, ErrorNames.databaseError, err.code);
       })
       .finally(() => {
         client.release();

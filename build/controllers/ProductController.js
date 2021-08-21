@@ -8,89 +8,113 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var ProductController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 const decorators_1 = require("./decorators");
 const repos_1 = require("../repos");
 const CustomError_1 = require("../errors/CustomError");
+const CampaignRepo_1 = require("../repos/CampaignRepo");
+const errors_1 = require("../errors");
 let ProductController = ProductController_1 = class ProductController {
     // TODO KESKEN
     getProducts(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield ProductController_1.repo.find();
-            if (result instanceof CustomError_1.CustomError) {
-                const { name, message, sqlErrorCode, responseCode } = result;
-                return res.status(responseCode).send({ name, message, sqlErrorCode });
-            }
+        ProductController_1.productRepo
+            .find()
+            .then(result => {
             res.status(200).send(result);
+        })
+            .catch(error => {
+            const { name, message, sqlErrorCode } = error;
+            res
+                .status(errors_1.ErrorResponseCodes._422)
+                .send({ name, message, sqlErrorCode });
         });
     }
     // TODO KESKEN
     getProduct(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
-            const result = yield ProductController_1.repo.findById(Number(id));
-            if (result instanceof CustomError_1.CustomError) {
-                const { name, message, sqlErrorCode, responseCode } = result;
-                return res.status(responseCode).send({ name, message, sqlErrorCode });
-            }
-            res.send(req.params);
+        const id = Number(req.params.id);
+        if (isNaN(id)) {
+            res
+                .status(errors_1.ErrorResponseCodes._422)
+                .send(new CustomError_1.CustomError('Cant handle characters in id', errors_1.ErrorNames.typeError));
+            return;
+        }
+        Promise.all([
+            ProductController_1.productRepo.findById(id),
+            ProductController_1.campaignRepo.findByProductId(id)
+        ])
+            .then(result => {
+            const [product, campaign] = result;
+            res.status(200).send({
+                product,
+                campaign
+            });
+        })
+            .catch(error => {
+            const { name, message, sqlErrorCode } = error;
+            res
+                .status(errors_1.ErrorResponseCodes._422)
+                .send({ name, message, sqlErrorCode });
         });
     }
     getLatest(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield ProductController_1.repo.findLatest();
-            if (result instanceof CustomError_1.CustomError) {
-                const { name, message, sqlErrorCode, responseCode } = result;
-                return res.status(responseCode).send({ name, message, sqlErrorCode });
-            }
-            res.status(200).send(result);
+        Promise.all([
+            ProductController_1.productRepo.findLatest(),
+            ProductController_1.campaignRepo.findDiscounts()
+        ])
+            .then(result => {
+            const [products, discounts] = result;
+            res.status(200).send({
+                products,
+                discounts
+            });
+        })
+            .catch(error => {
+            const { name, message, sqlErrorCode } = error;
+            res
+                .status(errors_1.ErrorResponseCodes._422)
+                .send({ name, message, sqlErrorCode });
         });
     }
     getMostPopular(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield ProductController_1.repo.findMostPopulars();
-            if (result instanceof CustomError_1.CustomError) {
-                const { name, message, sqlErrorCode, responseCode } = result;
-                return res.status(responseCode).send({ name, message, sqlErrorCode });
-            }
+        ProductController_1.productRepo
+            .findMostPopulars()
+            .then(result => {
             res.status(200).send(result);
+        })
+            .catch(error => {
+            const { name, message, sqlErrorCode } = error;
+            res
+                .status(errors_1.ErrorResponseCodes._422)
+                .send({ name, message, sqlErrorCode });
         });
     }
 };
-ProductController.repo = new repos_1.ProductRepo();
+ProductController.productRepo = new repos_1.ProductRepo();
+ProductController.campaignRepo = new CampaignRepo_1.CampaignRepo();
 __decorate([
     decorators_1.get('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getProducts", null);
 __decorate([
     decorators_1.get('/single/:id'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getProduct", null);
 __decorate([
     decorators_1.get('/latest'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getLatest", null);
 __decorate([
-    decorators_1.get('/mostpopular'),
+    decorators_1.get('/mostpopulars'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getMostPopular", null);
 ProductController = ProductController_1 = __decorate([
     decorators_1.controller('/products')
