@@ -13,7 +13,7 @@ exports.up = pgm => {
       url_image VARCHAR(200) NOT NULL,
       starts_at TIMESTAMP WITH TIME ZONE NOT NULL,
       ends_at TIMESTAMP WITH TIME ZONE NOT NULL,
-      discount_percentage INTEGER NOT NULL,
+      discount_percentage INTEGER NOT NULL CHECK(discount_percentage < 90 AND discount_percentage > 0),
       CHECK(ends_at > starts_at)
     );
     

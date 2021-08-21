@@ -1,10 +1,10 @@
 import { ModelRepo } from './ModelRepo';
-import { ProductCardProps, ProductProps } from './interfaces/Products';
+import { ProductProps } from './interfaces/Products';
 
 export class ProductRepo extends ModelRepo {
   // TODO KESKEN
-  async find(): Promise<ProductCardProps[]> {
-    const result = await this.query<ProductCardProps>(`
+  async find(): Promise<ProductProps[]> {
+    const result = await this.query<ProductProps>(`
       SELECT *
       FROM products
       ORDER BY created_at DESC
@@ -43,8 +43,8 @@ export class ProductRepo extends ModelRepo {
     return result;
   }
 
-  async findLatest(): Promise<ProductCardProps[]> {
-    const result = await this.query<ProductCardProps>(`
+  async findLatest(): Promise<ProductProps[]> {
+    const result = await this.query<ProductProps>(`
       SELECT
         products.id AS product_id,
         products.name AS product_name,
@@ -67,8 +67,8 @@ export class ProductRepo extends ModelRepo {
     return result;
   }
 
-  async findMostPopulars(): Promise<ProductCardProps[]> {
-    const result = await this.query<ProductCardProps>(`
+  async findMostPopulars(): Promise<ProductProps[]> {
+    const result = await this.query<ProductProps>(`
       SELECT
         products.id AS product_id,
         products.name AS product_name,

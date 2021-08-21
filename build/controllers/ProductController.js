@@ -63,7 +63,8 @@ let ProductController = ProductController_1 = class ProductController {
             ProductController_1.campaignRepo.findDiscounts()
         ])
             .then(result => {
-            const [products, discounts] = result;
+            const [_products, discounts] = result;
+            const products = ProductController_1.addDiscountRow(_products, discounts);
             res.status(200).send({
                 products,
                 discounts
@@ -77,16 +78,34 @@ let ProductController = ProductController_1 = class ProductController {
         });
     }
     getMostPopular(req, res) {
-        ProductController_1.productRepo
-            .findMostPopulars()
+        Promise.all([
+            ProductController_1.productRepo.findMostPopulars(),
+            ProductController_1.campaignRepo.findDiscounts()
+        ])
             .then(result => {
-            res.status(200).send(result);
+            const [_products, discounts] = result;
+            const products = ProductController_1.addDiscountRow(_products, discounts);
+            res.status(200).send({
+                products,
+                discounts
+            });
         })
             .catch(error => {
             const { name, message, sqlErrorCode } = error;
             res
                 .status(errors_1.ErrorResponseCodes._422)
                 .send({ name, message, sqlErrorCode });
+        });
+    }
+    static addDiscountRow(products, discounts) {
+        return products.map((product) => {
+            discounts.forEach((discount) => {
+                if (product.productId === discount.productId) {
+                    product['discountPercentage'] = discount.discountPercentage;
+                    return;
+                }
+            });
+            return product;
         });
     }
 };

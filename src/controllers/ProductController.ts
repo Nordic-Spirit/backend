@@ -5,7 +5,6 @@ import { CustomError } from '../errors/CustomError';
 import { CampaignRepo } from '../repos/CampaignRepo';
 import {
   ProductProps,
-  ProductCardProps,
   CampaignProps,
   CampaignDiscount
 } from '../repos/interfaces';
@@ -71,12 +70,14 @@ class ProductController {
 
   @get('/latest')
   getLatest(req: Request, res: Response) {
-    Promise.all<ProductCardProps[], CampaignDiscount[]>([
+    Promise.all<ProductProps[], CampaignDiscount[]>([
       ProductController.productRepo.findLatest(),
       ProductController.campaignRepo.findDiscounts()
     ])
       .then(result => {
-        const [products, discounts] = result;
+        const [_products, discounts] = result;
+
+        const products = ProductController.addDiscountRow(_products, discounts);
 
         res.status(200).send({
           products,
@@ -94,10 +95,19 @@ class ProductController {
 
   @get('/mostpopulars')
   getMostPopular(req: Request, res: Response) {
-    ProductController.productRepo
-      .findMostPopulars()
+    Promise.all<ProductProps[], CampaignDiscount[]>([
+      ProductController.productRepo.findMostPopulars(),
+      ProductController.campaignRepo.findDiscounts()
+    ])
       .then(result => {
-        res.status(200).send(result);
+        const [_products, discounts] = result;
+
+        const products = ProductController.addDiscountRow(_products, discounts);
+
+        res.status(200).send({
+          products,
+          discounts
+        });
       })
       .catch(error => {
         const { name, message, sqlErrorCode } = error;
@@ -106,5 +116,21 @@ class ProductController {
           .status(ErrorResponseCodes._422)
           .send({ name, message, sqlErrorCode });
       });
+  }
+
+  static addDiscountRow(
+    products: ProductProps[],
+    discounts: CampaignDiscount[]
+  ): ProductProps[] {
+    return products.map((product: ProductProps): ProductProps => {
+      discounts.forEach((discount: CampaignDiscount) => {
+        if (product.productId === discount.productId) {
+          product['discountPercentage'] = discount.discountPercentage;
+          return;
+        }
+      });
+
+      return product;
+    });
   }
 }
