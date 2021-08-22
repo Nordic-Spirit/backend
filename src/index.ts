@@ -4,7 +4,7 @@ import { AppRouter } from './AppRouter';
 import pool from './config/pool';
 import { port } from './config';
 
-import './controllers/ProductController';
+import './controllers';
 
 const app = express();
 

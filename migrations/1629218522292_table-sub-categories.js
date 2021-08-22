@@ -10,8 +10,8 @@ exports.up = pgm => {
       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
       name VARCHAR(30) NOT NULL,
       description VARCHAR(240),
-      categorie_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
-      UNIQUE(id, categorie_id, name)
+      category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+      UNIQUE(id, category_id, name)
     );
   `);
 };

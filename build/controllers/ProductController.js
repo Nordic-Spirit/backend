@@ -94,7 +94,7 @@ let ProductController = ProductController_1 = class ProductController {
                 .send({ name, message, sqlErrorCode });
         });
     }
-    getMostPopular(req, res) {
+    getMostPopulars(req, res) {
         Promise.all([
             ProductController_1.productRepo.findMostPopulars(),
             ProductController_1.campaignRepo.findDiscounts()
@@ -152,7 +152,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
-], ProductController.prototype, "getMostPopular", null);
+], ProductController.prototype, "getMostPopulars", null);
 ProductController = ProductController_1 = __decorate([
     decorators_1.controller('/products')
 ], ProductController);

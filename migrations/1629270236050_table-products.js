@@ -17,8 +17,8 @@ exports.up = pgm => {
       capacity DOUBLE PRECISION NOT NULL,
       manufacturer VARCHAR(70) NOT NULL,
       country_of_manufacturer VARCHAR(50) NOT NULL,
-      categorie_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-      sub_categorie_id INTEGER REFERENCES sub_categories(id) ON DELETE SET NULL
+      category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+      sub_category_id INTEGER REFERENCES sub_categories(id) ON DELETE SET NULL
     );
 
     CREATE INDEX ON products(on_sale);

@@ -1,5 +1,5 @@
 import { ModelRepo } from './ModelRepo';
-import { ProductDiscount } from './interfaces/Campaigns';
+import { ProductDiscount } from '../interfaces/Campaigns';
 
 export class CampaignRepo extends ModelRepo {
   async findDiscounts(): Promise<ProductDiscount[]> {

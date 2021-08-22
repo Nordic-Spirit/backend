@@ -8,7 +8,7 @@ const cors_1 = __importDefault(require("cors"));
 const AppRouter_1 = require("./AppRouter");
 const pool_1 = __importDefault(require("./config/pool"));
 const config_1 = require("./config");
-require("./controllers/ProductController");
+require("./controllers");
 const app = express_1.default();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));

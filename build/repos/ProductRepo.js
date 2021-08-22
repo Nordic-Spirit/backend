@@ -38,13 +38,13 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         p.capacity,
         p.manufacturer,
         p.country_of_manufacturer,
-        cat.id AS categorie_id,
-        cat.name AS categorie_name,
-        sc.id AS sub_categorie_id,
-        sc.name AS sub_categorie_name
+        c.id AS category_id,
+        c.name AS category_name,
+        sc.id AS sub_category_id,
+        sc.name AS sub_category_name
       FROM products AS p
-      JOIN categories AS cat ON cat.id = p.categorie_id
-      JOIN sub_categories AS sc ON sc.id = p.sub_categorie_id
+      JOIN categories AS c ON c.id = p.category_id
+      JOIN sub_categories AS sc ON sc.id = p.sub_category_id
       WHERE p.id = $1 AND p.on_sale = TRUE;
     `, [id]);
             return result;
@@ -54,23 +54,24 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
       SELECT
-        products.id AS product_id,
-        products.name AS product_name,
-        products.url AS product_url,
-        products.price AS product_price,
-        categories.id AS categorie_id,
-        categories.name AS categorie_name,
+        p.id AS product_id,
+        p.name AS product_name,
+        p.url AS product_url,
+        p.price AS product_price,
+        c.id AS category_id,
+        c.name AS category_name,
         (
           SELECT COUNT(*)
-          FROM products_in_storages
-          WHERE products_in_storages.product_id = products.id
+          FROM products_in_storages AS pis
+          WHERE pis.product_id = p.id
         ) AS product_count
-      FROM products
-      JOIN categories ON categories.id = products.categorie_id
-      WHERE products.on_sale = TRUE
-      ORDER BY products.created_at DESC
+      FROM products AS p
+      JOIN categories AS c ON c.id = p.category_id
+      WHERE p.on_sale = TRUE
+      ORDER BY p.created_at DESC
       LIMIT 10;
     `);
+            console.log('huhu');
             return result;
         });
     }
@@ -78,18 +79,18 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
       SELECT
-        products.id AS product_id,
-        products.name AS product_name,
-        products.url AS product_url,
-        products.price AS product_price,
-        categories.id AS categorie_id,
-        categories.name AS categorie_name,
+        p.id AS product_id,
+        p.name AS product_name,
+        p.url AS product_url,
+        p.price AS product_price,
+        c.id AS categorie_id,
+        c.name AS categorie_name,
         (
           SELECT COUNT(*)
           FROM products_in_storages
-          WHERE products_in_storages.product_id = products.id
+          WHERE products_in_storages.product_id = p.id
         ) AS product_count
-      FROM products
+      FROM products AS p
       JOIN (
         SELECT
           orders_products.product_id,
@@ -98,8 +99,8 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         WHERE EXTRACT(DAY FROM CURRENT_TIMESTAMP - orders_products.created_at) < 60
         GROUP BY product_id
       ) AS op
-      ON op.product_id = products.id
-      JOIN categories ON categories.id = products.categorie_id
+      ON op.product_id = p.id
+      JOIN categories AS c ON c.id = p.category_id
       ORDER BY op.products_sold DESC
       LIMIT 10;
     `);

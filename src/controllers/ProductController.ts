@@ -3,9 +3,8 @@ import { controller, get } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
 import { CampaignRepo } from '../repos/CampaignRepo';
-import { ProductProps, ProductDiscount } from '../repos/interfaces';
+import { ProductProps, ProductDiscount } from '../interfaces';
 import { ErrorNames, ErrorResponseCodes } from '../errors';
-import { errorMonitor } from 'events';
 
 @controller('/products')
 class ProductController {
@@ -118,7 +117,7 @@ class ProductController {
   }
 
   @get('/mostpopulars')
-  getMostPopular(req: Request, res: Response) {
+  getMostPopulars(req: Request, res: Response) {
     Promise.all<ProductProps[], ProductDiscount[]>([
       ProductController.productRepo.findMostPopulars(),
       ProductController.campaignRepo.findDiscounts()
