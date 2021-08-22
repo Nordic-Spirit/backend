@@ -5,7 +5,7 @@ export interface CampaignProps {
   discountPercentage: number;
 }
 
-export interface CampaignDiscount {
+export interface ProductDiscount {
   productId: number;
   discountPercentage: number;
 }

@@ -3,12 +3,9 @@ import { controller, get } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
 import { CampaignRepo } from '../repos/CampaignRepo';
-import {
-  ProductProps,
-  CampaignProps,
-  CampaignDiscount
-} from '../repos/interfaces';
+import { ProductProps, ProductDiscount } from '../repos/interfaces';
 import { ErrorNames, ErrorResponseCodes } from '../errors';
+import { errorMonitor } from 'events';
 
 @controller('/products')
 class ProductController {
@@ -21,7 +18,11 @@ class ProductController {
     ProductController.productRepo
       .find()
       .then(result => {
-        res.status(200).send(result);
+        res.status(200).send({
+          data: {
+            result
+          }
+        });
       })
       .catch(error => {
         const { name, message, sqlErrorCode } = error;
@@ -41,36 +42,58 @@ class ProductController {
       res
         .status(ErrorResponseCodes._422)
         .send(
-          new CustomError('Cant handle characters in id', ErrorNames.typeError)
+          new CustomError(
+            'Cant handle characters in product id',
+            ErrorNames.typeError
+          )
         );
 
       return;
     }
 
-    Promise.all<ProductProps[], CampaignDiscount[]>([
+    Promise.all<ProductProps[], ProductDiscount[]>([
       ProductController.productRepo.findById(id),
       ProductController.campaignRepo.findByProductId(id)
     ])
       .then(result => {
-        const [product, campaign] = result;
+        const [_product, discount] = result;
+
+        const product = ProductController.addDiscountRow(_product, discount)[0];
+
+        if (!product) {
+          const error = new CustomError(
+            'Cannot find product',
+            ErrorNames.notFound
+          );
+
+          error.responseCode = ErrorResponseCodes._404;
+          console.log();
+
+          throw error;
+        }
 
         res.status(200).send({
-          product,
-          campaign
+          data: {
+            product
+          }
         });
       })
       .catch(error => {
-        const { name, message, sqlErrorCode } = error;
+        const { name, message, responseCode } = error;
 
-        res
-          .status(ErrorResponseCodes._422)
-          .send({ name, message, sqlErrorCode });
+        res.status(error.responseCode).send({
+          error: {
+            name,
+            message,
+            responseCode
+          }
+        });
       });
   }
 
   @get('/latest')
   getLatest(req: Request, res: Response) {
-    Promise.all<ProductProps[], CampaignDiscount[]>([
+    Promise.all<ProductProps[], ProductDiscount[]>([
       ProductController.productRepo.findLatest(),
       ProductController.campaignRepo.findDiscounts()
     ])
@@ -80,8 +103,9 @@ class ProductController {
         const products = ProductController.addDiscountRow(_products, discounts);
 
         res.status(200).send({
-          products,
-          discounts
+          data: {
+            products
+          }
         });
       })
       .catch(error => {
@@ -95,7 +119,7 @@ class ProductController {
 
   @get('/mostpopulars')
   getMostPopular(req: Request, res: Response) {
-    Promise.all<ProductProps[], CampaignDiscount[]>([
+    Promise.all<ProductProps[], ProductDiscount[]>([
       ProductController.productRepo.findMostPopulars(),
       ProductController.campaignRepo.findDiscounts()
     ])
@@ -105,8 +129,9 @@ class ProductController {
         const products = ProductController.addDiscountRow(_products, discounts);
 
         res.status(200).send({
-          products,
-          discounts
+          data: {
+            products
+          }
         });
       })
       .catch(error => {
@@ -120,10 +145,10 @@ class ProductController {
 
   static addDiscountRow(
     products: ProductProps[],
-    discounts: CampaignDiscount[]
+    discounts: ProductDiscount[]
   ): ProductProps[] {
     return products.map((product: ProductProps): ProductProps => {
-      discounts.forEach((discount: CampaignDiscount) => {
+      discounts.forEach((discount: ProductDiscount) => {
         if (product.productId === discount.productId) {
           product['discountPercentage'] = discount.discountPercentage;
           return;

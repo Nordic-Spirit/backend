@@ -1,9 +1,9 @@
 import { ModelRepo } from './ModelRepo';
-import { CampaignDiscount } from './interfaces/Campaigns';
+import { ProductDiscount } from './interfaces/Campaigns';
 
 export class CampaignRepo extends ModelRepo {
-  async findDiscounts(): Promise<CampaignDiscount[]> {
-    const result = await this.query<CampaignDiscount>(`
+  async findDiscounts(): Promise<ProductDiscount[]> {
+    const result = await this.query<ProductDiscount>(`
       SELECT
         pc.product_id,
         c.discount_percentage
@@ -15,15 +15,15 @@ export class CampaignRepo extends ModelRepo {
     return result;
   }
 
-  async findByProductId(id: number): Promise<CampaignDiscount[]> {
-    const result = await this.query<CampaignDiscount>(
+  async findByProductId(id: number): Promise<ProductDiscount[]> {
+    const result = await this.query<ProductDiscount>(
       `
       SELECT
         pc.product_id,
         c.discount_percentage
       FROM campaigns AS c
       JOIN products_campaigns AS pc ON pc.campaign_id = c.id
-      WHERE pc.product_id = $1
+      WHERE c.ends_at < CURRENT_TIMESTAMP AND pc.product_id = $1
       ORDER BY c.discount_percentage DESC
       LIMIT 1;
     `,

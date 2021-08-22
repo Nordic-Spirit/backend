@@ -10,10 +10,14 @@ class CustomError {
     log() {
         // TODO In this method we will log errors to somewhere
         console.log({
-            name: this.name,
-            message: this.message,
-            sqlErrorCode: this.sqlErrorCode
+            error: this
         });
+    }
+    get responseCode() {
+        return this._responseCode || 422;
+    }
+    set responseCode(code) {
+        this._responseCode = code;
     }
 }
 exports.CustomError = CustomError;

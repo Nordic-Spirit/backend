@@ -21,7 +21,11 @@ let ProductController = ProductController_1 = class ProductController {
         ProductController_1.productRepo
             .find()
             .then(result => {
-            res.status(200).send(result);
+            res.status(200).send({
+                data: {
+                    result
+                }
+            });
         })
             .catch(error => {
             const { name, message, sqlErrorCode } = error;
@@ -36,7 +40,7 @@ let ProductController = ProductController_1 = class ProductController {
         if (isNaN(id)) {
             res
                 .status(errors_1.ErrorResponseCodes._422)
-                .send(new CustomError_1.CustomError('Cant handle characters in id', errors_1.ErrorNames.typeError));
+                .send(new CustomError_1.CustomError('Cant handle characters in product id', errors_1.ErrorNames.typeError));
             return;
         }
         Promise.all([
@@ -44,17 +48,29 @@ let ProductController = ProductController_1 = class ProductController {
             ProductController_1.campaignRepo.findByProductId(id)
         ])
             .then(result => {
-            const [product, campaign] = result;
+            const [_product, discount] = result;
+            const product = ProductController_1.addDiscountRow(_product, discount)[0];
+            if (!product) {
+                const error = new CustomError_1.CustomError('Cannot find product', errors_1.ErrorNames.notFound);
+                error.responseCode = errors_1.ErrorResponseCodes._404;
+                console.log();
+                throw error;
+            }
             res.status(200).send({
-                product,
-                campaign
+                data: {
+                    product
+                }
             });
         })
             .catch(error => {
-            const { name, message, sqlErrorCode } = error;
-            res
-                .status(errors_1.ErrorResponseCodes._422)
-                .send({ name, message, sqlErrorCode });
+            const { name, message, responseCode } = error;
+            res.status(error.responseCode).send({
+                error: {
+                    name,
+                    message,
+                    responseCode
+                }
+            });
         });
     }
     getLatest(req, res) {
@@ -66,8 +82,9 @@ let ProductController = ProductController_1 = class ProductController {
             const [_products, discounts] = result;
             const products = ProductController_1.addDiscountRow(_products, discounts);
             res.status(200).send({
-                products,
-                discounts
+                data: {
+                    products
+                }
             });
         })
             .catch(error => {
@@ -86,8 +103,9 @@ let ProductController = ProductController_1 = class ProductController {
             const [_products, discounts] = result;
             const products = ProductController_1.addDiscountRow(_products, discounts);
             res.status(200).send({
-                products,
-                discounts
+                data: {
+                    products
+                }
             });
         })
             .catch(error => {

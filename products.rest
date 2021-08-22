@@ -1,8 +1,16 @@
+GET http://localhost:8080/products/
+
+###
+
+GET http://localhost:8080/products/single/106
+
+###
+
 GET http://localhost:8080/products/latest
 
 ###
 
-GET http://localhost:8080/products/10
+GET http://localhost:8080/products/mostpopulars
 
 ###
 

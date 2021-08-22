@@ -33,7 +33,7 @@ class CampaignRepo extends ModelRepo_1.ModelRepo {
         c.discount_percentage
       FROM campaigns AS c
       JOIN products_campaigns AS pc ON pc.campaign_id = c.id
-      WHERE pc.product_id = $1
+      WHERE c.ends_at < CURRENT_TIMESTAMP AND pc.product_id = $1
       ORDER BY c.discount_percentage DESC
       LIMIT 1;
     `, [id]);
