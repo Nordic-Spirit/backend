@@ -12,6 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryRepo = void 0;
 const ModelRepo_1 = require("./ModelRepo");
 class CategoryRepo extends ModelRepo_1.ModelRepo {
+    constructor() {
+        super(...arguments);
+        this.x = new Promise((resolve, reject) => { });
+    }
     findCategories() {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`

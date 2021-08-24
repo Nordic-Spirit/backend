@@ -25,7 +25,7 @@ class CampaignRepo extends ModelRepo_1.ModelRepo {
             return result;
         });
     }
-    findByProductId(id) {
+    findDiscountByProductId(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
       SELECT
@@ -33,11 +33,54 @@ class CampaignRepo extends ModelRepo_1.ModelRepo {
         c.discount_percentage
       FROM campaigns AS c
       JOIN products_campaigns AS pc ON pc.campaign_id = c.id
-      WHERE c.ends_at < CURRENT_TIMESTAMP AND pc.product_id = $1
+      WHERE c.ends_at > CURRENT_TIMESTAMP AND pc.product_id = $1
       ORDER BY c.discount_percentage DESC
       LIMIT 1;
     `, [id]);
-            // TODO if result is empty return CustomError
+            return result;
+        });
+    }
+    findLatest() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = this.query(`
+      SELECT
+        c.id AS campaign_id,
+        c.name AS campaign_name,
+        c.ends_at AS campaign_ends_at,
+        c.url_image AS campaign_url_image,
+        discount_percentage AS campaign_discount_percentage,
+        (
+          SELECT
+            COUNT(product_id)::INTEGER
+          FROM products_campaigns
+          WHERE campaign_id = c.id
+        ) AS product_count_in_campaign
+      FROM campaigns AS c
+      WHERE
+        c.ends_at > CURRENT_TIMESTAMP
+        AND
+        c.starts_at < CURRENT_TIMESTAMP
+      ORDER BY starts_at
+      LIMIT 2;
+    `);
+            return result;
+        });
+    }
+    findLatestProductIds() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.query(`
+      SELECT
+        product_id,
+        campaign_id
+        FROM products_campaigns AS pc
+        WHERE pc.campaign_id IN (
+          SELECT id
+          FROM campaigns AS c
+          WHERE c.ends_at > CURRENT_TIMESTAMP AND c.starts_at < CURRENT_TIMESTAMP
+          ORDER BY starts_at
+          LIMIT 2
+        );
+    `);
             return result;
         });
     }

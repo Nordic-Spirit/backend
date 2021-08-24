@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const decorators_1 = require("./decorators");
 const repos_1 = require("../repos");
 let CategoryController = CategoryController_1 = class CategoryController {
+    // TODO - KESKEN
     getCategories(req, res) {
         Promise.all([
             CategoryController_1.categoryRepo.findCategories(),
@@ -20,21 +21,7 @@ let CategoryController = CategoryController_1 = class CategoryController {
         ])
             .then(result => {
             const [categories, subCategories] = result;
-            const combinedCategories = categories.map(({ categoryId, categoryName }) => {
-                return {
-                    categoryId,
-                    categoryName,
-                    subCategories: subCategories.flatMap(({ subCategoryId, subCategoryName, subCategoryCategoryId }) => {
-                        if (categoryId !== subCategoryCategoryId)
-                            return [];
-                        return {
-                            subCategoryId,
-                            subCategoryName,
-                            subCategoryCategoryId
-                        };
-                    })
-                };
-            });
+            const combinedCategories = CategoryController_1.combineCategories(categories, subCategories);
             res.status(200).send({
                 data: {
                     combinedCategories
@@ -42,8 +29,29 @@ let CategoryController = CategoryController_1 = class CategoryController {
             });
         })
             .catch(error => {
-            console.log(error);
+            // TODO - ERROR HANDLINGIIN PAREMMAN VASTAUKSEN LÄHETTÄMINEN CLIENTILLE
+            if (error.sqlErrorCode) {
+                res.status(422).send(error);
+                return;
+            }
             res.status(422).send(error);
+        });
+    }
+    static combineCategories(categories, subCategories) {
+        return categories.map(({ categoryId, categoryName }) => {
+            return {
+                categoryId,
+                categoryName,
+                subCategories: subCategories.flatMap(({ subCategoryId, subCategoryName, subCategoryCategoryId }) => {
+                    if (categoryId !== subCategoryCategoryId)
+                        return [];
+                    return {
+                        subCategoryId,
+                        subCategoryName,
+                        subCategoryCategoryId
+                    };
+                })
+            };
         });
     }
 };

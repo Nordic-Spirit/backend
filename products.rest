@@ -2,7 +2,12 @@ GET http://localhost:8080/products/
 
 ###
 
-GET http://localhost:8080/products/single/106
+GET http://localhost:8080/products/single/158
+Content-Type: application/json
+
+{
+  "userId": 441
+}
 
 ###
 
@@ -19,4 +24,13 @@ Content-Type: application/json
 
 {
   "name": "testproduct"
+}
+
+###
+
+GET http://localhost:8080/products/latest
+Content-Type: application/json
+
+{
+  "userId": 441
 }

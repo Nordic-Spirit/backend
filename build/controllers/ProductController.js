@@ -16,8 +16,9 @@ const CustomError_1 = require("../errors/CustomError");
 const CampaignRepo_1 = require("../repos/CampaignRepo");
 const errors_1 = require("../errors");
 let ProductController = ProductController_1 = class ProductController {
-    // TODO KESKEN
+    // TODO - KESKEN
     getProducts(req, res) {
+        const id = req.body.userId || null;
         ProductController_1.productRepo
             .find()
             .then(result => {
@@ -34,18 +35,18 @@ let ProductController = ProductController_1 = class ProductController {
                 .send({ name, message, sqlErrorCode });
         });
     }
-    // TODO KESKEN
     getProduct(req, res) {
-        const id = Number(req.params.id);
-        if (isNaN(id)) {
+        const productId = Number(req.params.id);
+        const userId = req.body.userId || null;
+        if (isNaN(productId)) {
             res
                 .status(errors_1.ErrorResponseCodes._422)
-                .send(new CustomError_1.CustomError('Cant handle characters in product id', errors_1.ErrorNames.typeError));
+                .send(new CustomError_1.CustomError('Cant handle characters in product productId', errors_1.ErrorNames.typeError));
             return;
         }
         Promise.all([
-            ProductController_1.productRepo.findById(id),
-            ProductController_1.campaignRepo.findByProductId(id)
+            ProductController_1.productRepo.findById(productId, userId),
+            ProductController_1.campaignRepo.findDiscountByProductId(productId)
         ])
             .then(result => {
             const [_product, discount] = result;
@@ -53,7 +54,6 @@ let ProductController = ProductController_1 = class ProductController {
             if (!product) {
                 const error = new CustomError_1.CustomError('Cannot find product', errors_1.ErrorNames.notFound);
                 error.responseCode = errors_1.ErrorResponseCodes._404;
-                console.log();
                 throw error;
             }
             res.status(200).send({
@@ -74,8 +74,9 @@ let ProductController = ProductController_1 = class ProductController {
         });
     }
     getLatest(req, res) {
+        const userId = req.body.userId || null;
         Promise.all([
-            ProductController_1.productRepo.findLatest(),
+            ProductController_1.productRepo.findLatest(userId),
             ProductController_1.campaignRepo.findDiscounts()
         ])
             .then(result => {
@@ -95,8 +96,9 @@ let ProductController = ProductController_1 = class ProductController {
         });
     }
     getMostPopulars(req, res) {
+        const userId = parseInt(req.body.userId) || null;
         Promise.all([
-            ProductController_1.productRepo.findMostPopulars(),
+            ProductController_1.productRepo.findMostPopulars(userId),
             ProductController_1.campaignRepo.findDiscounts()
         ])
             .then(result => {
@@ -114,6 +116,23 @@ let ProductController = ProductController_1 = class ProductController {
                 .status(errors_1.ErrorResponseCodes._422)
                 .send({ name, message, sqlErrorCode });
         });
+    }
+    getBestRatings(req, res) {
+        const userId = parseInt(req.body.userId) || null;
+        Promise.all([
+            ProductController_1.productRepo.findBestRatings(userId),
+            ProductController_1.campaignRepo.findDiscounts()
+        ])
+            .then(result => {
+            const [_products, discounts] = result;
+            const products = ProductController_1.addDiscountRow(_products, discounts);
+            res.status(200).send({
+                data: {
+                    products
+                }
+            });
+        })
+            .catch(error => { });
     }
     static addDiscountRow(products, discounts) {
         return products.map((product) => {
@@ -153,6 +172,12 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getMostPopulars", null);
+__decorate([
+    decorators_1.get('/bestratings'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "getBestRatings", null);
 ProductController = ProductController_1 = __decorate([
     decorators_1.controller('/products')
 ], ProductController);

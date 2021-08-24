@@ -22,6 +22,7 @@ exports.up = pgm => {
     );
 
     CREATE INDEX ON products(on_sale);
+    CREATE INDEX ON products(name);
   `);
 };
 

@@ -13,6 +13,8 @@ export class CategoryRepo extends ModelRepo {
     return result;
   }
 
+  x = new Promise((resolve, reject) => {});
+
   async findSubCategories(): Promise<SubCategoryProps[]> {
     const result = await this.query<SubCategoryProps>(`
       SELECT

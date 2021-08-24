@@ -1,16 +1,17 @@
 import { Request, Response } from 'express';
 import { controller, get } from './decorators';
+import { CategoryRepo } from '../repos';
 import {
   CategoryProps,
   CombinedCategories,
   SubCategoryProps
 } from '../interfaces';
-import { CategoryRepo } from '../repos';
 
 @controller('/categories')
 class CategoryController {
   static categoryRepo = new CategoryRepo();
 
+  // TODO - KESKEN
   @get('/')
   getCategories(req: Request, res: Response) {
     Promise.all<CategoryProps[], SubCategoryProps[]>([
@@ -20,28 +21,9 @@ class CategoryController {
       .then(result => {
         const [categories, subCategories] = result;
 
-        const combinedCategories = categories.map(
-          ({ categoryId, categoryName }: CategoryProps): CombinedCategories => {
-            return {
-              categoryId,
-              categoryName,
-              subCategories: subCategories.flatMap(
-                ({
-                  subCategoryId,
-                  subCategoryName,
-                  subCategoryCategoryId
-                }): SubCategoryProps | [] => {
-                  if (categoryId !== subCategoryCategoryId) return [];
-
-                  return {
-                    subCategoryId,
-                    subCategoryName,
-                    subCategoryCategoryId
-                  };
-                }
-              )
-            };
-          }
+        const combinedCategories = CategoryController.combineCategories(
+          categories,
+          subCategories
         );
 
         res.status(200).send({
@@ -51,9 +33,44 @@ class CategoryController {
         });
       })
       .catch(error => {
-        console.log(error);
+        // TODO - ERROR HANDLINGIIN PAREMMAN VASTAUKSEN LÄHETTÄMINEN CLIENTILLE
+
+        if (error.sqlErrorCode) {
+          res.status(422).send(error);
+
+          return;
+        }
 
         res.status(422).send(error);
       });
+  }
+
+  static combineCategories(
+    categories: CategoryProps[],
+    subCategories: SubCategoryProps[]
+  ): CombinedCategories[] {
+    return categories.map(
+      ({ categoryId, categoryName }: CategoryProps): CombinedCategories => {
+        return {
+          categoryId,
+          categoryName,
+          subCategories: subCategories.flatMap(
+            ({
+              subCategoryId,
+              subCategoryName,
+              subCategoryCategoryId
+            }: SubCategoryProps): SubCategoryProps | [] => {
+              if (categoryId !== subCategoryCategoryId) return [];
+
+              return {
+                subCategoryId,
+                subCategoryName,
+                subCategoryCategoryId
+              };
+            }
+          )
+        };
+      }
+    );
   }
 }

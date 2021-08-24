@@ -3,7 +3,7 @@ import { controller, get } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
 import { CampaignRepo } from '../repos/CampaignRepo';
-import { ProductProps, ProductDiscount } from '../interfaces';
+import { ProductProps, ProductDiscount, ProductCardProps } from '../interfaces';
 import { ErrorNames, ErrorResponseCodes } from '../errors';
 
 @controller('/products')
@@ -11,9 +11,11 @@ class ProductController {
   static productRepo = new ProductRepo();
   static campaignRepo = new CampaignRepo();
 
-  // TODO KESKEN
+  // TODO - KESKEN
   @get('/')
   getProducts(req: Request, res: Response) {
+    const id = req.body.userId || null;
+
     ProductController.productRepo
       .find()
       .then(result => {
@@ -32,17 +34,17 @@ class ProductController {
       });
   }
 
-  // TODO KESKEN
   @get('/single/:id')
   getProduct(req: Request, res: Response) {
-    const id = Number(req.params.id);
+    const productId = Number(req.params.id);
+    const userId = req.body.userId || null;
 
-    if (isNaN(id)) {
+    if (isNaN(productId)) {
       res
         .status(ErrorResponseCodes._422)
         .send(
           new CustomError(
-            'Cant handle characters in product id',
+            'Cant handle characters in product productId',
             ErrorNames.typeError
           )
         );
@@ -51,8 +53,8 @@ class ProductController {
     }
 
     Promise.all<ProductProps[], ProductDiscount[]>([
-      ProductController.productRepo.findById(id),
-      ProductController.campaignRepo.findByProductId(id)
+      ProductController.productRepo.findById(productId, userId),
+      ProductController.campaignRepo.findDiscountByProductId(productId)
     ])
       .then(result => {
         const [_product, discount] = result;
@@ -66,7 +68,6 @@ class ProductController {
           );
 
           error.responseCode = ErrorResponseCodes._404;
-          console.log();
 
           throw error;
         }
@@ -92,8 +93,10 @@ class ProductController {
 
   @get('/latest')
   getLatest(req: Request, res: Response) {
-    Promise.all<ProductProps[], ProductDiscount[]>([
-      ProductController.productRepo.findLatest(),
+    const userId = req.body.userId || null;
+
+    Promise.all<ProductCardProps[], ProductDiscount[]>([
+      ProductController.productRepo.findLatest(userId),
       ProductController.campaignRepo.findDiscounts()
     ])
       .then(result => {
@@ -118,8 +121,10 @@ class ProductController {
 
   @get('/mostpopulars')
   getMostPopulars(req: Request, res: Response) {
-    Promise.all<ProductProps[], ProductDiscount[]>([
-      ProductController.productRepo.findMostPopulars(),
+    const userId = parseInt(req.body.userId) || null;
+
+    Promise.all<ProductCardProps[], ProductDiscount[]>([
+      ProductController.productRepo.findMostPopulars(userId),
       ProductController.campaignRepo.findDiscounts()
     ])
       .then(result => {
@@ -142,14 +147,37 @@ class ProductController {
       });
   }
 
+  @get('/bestratings')
+  getBestRatings(req: Request, res: Response) {
+    const userId = parseInt(req.body.userId) || null;
+
+    Promise.all<ProductCardProps[], ProductDiscount[]>([
+      ProductController.productRepo.findBestRatings(userId),
+      ProductController.campaignRepo.findDiscounts()
+    ])
+      .then(result => {
+        const [_products, discounts] = result;
+
+        const products = ProductController.addDiscountRow(_products, discounts);
+
+        res.status(200).send({
+          data: {
+            products
+          }
+        });
+      })
+      .catch(error => {});
+  }
+
   static addDiscountRow(
-    products: ProductProps[],
+    products: ProductCardProps[],
     discounts: ProductDiscount[]
-  ): ProductProps[] {
-    return products.map((product: ProductProps): ProductProps => {
+  ): ProductCardProps[] {
+    return products.map((product: ProductCardProps): ProductCardProps => {
       discounts.forEach((discount: ProductDiscount) => {
         if (product.productId === discount.productId) {
           product['discountPercentage'] = discount.discountPercentage;
+
           return;
         }
       });

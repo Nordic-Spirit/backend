@@ -12,5 +12,5 @@ export interface SubCategoryProps {
 }
 
 export interface CombinedCategories extends CategoryProps {
-  subCategories?: SubCategoryProps[];
+  subCategories: SubCategoryProps[];
 }
