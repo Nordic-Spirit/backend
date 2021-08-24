@@ -14,10 +14,8 @@ const decorators_1 = require("./decorators");
 const repos_1 = require("../repos");
 let CampaignController = CampaignController_1 = class CampaignController {
     getCampaigns(req, res) {
-        Promise.all([
-            CampaignController_1.campaignRepo.findLatest(),
-            CampaignController_1.productRepo.findCampaignProducts()
-        ])
+        CampaignController_1.campaignRepo
+            .find()
             .then(result => {
             res.status(200).send({
                 data: {

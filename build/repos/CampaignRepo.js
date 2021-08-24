@@ -12,31 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CampaignRepo = void 0;
 const ModelRepo_1 = require("./ModelRepo");
 class CampaignRepo extends ModelRepo_1.ModelRepo {
-    findDiscounts() {
+    find() {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
-      SELECT
-        pc.product_id,
-        c.discount_percentage
-      FROM campaigns AS c
-      JOIN products_campaigns AS pc ON pc.campaign_id = c.id
-      WHERE c.ends_at > CURRENT_TIMESTAMP;
+
     `);
-            return result;
-        });
-    }
-    findDiscountByProductId(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.query(`
-      SELECT
-        pc.product_id,
-        c.discount_percentage
-      FROM campaigns AS c
-      JOIN products_campaigns AS pc ON pc.campaign_id = c.id
-      WHERE c.ends_at > CURRENT_TIMESTAMP AND pc.product_id = $1
-      ORDER BY c.discount_percentage DESC
-      LIMIT 1;
-    `, [id]);
             return result;
         });
     }
@@ -50,8 +30,7 @@ class CampaignRepo extends ModelRepo_1.ModelRepo {
         c.url_image AS campaign_url_image,
         discount_percentage AS campaign_discount_percentage,
         (
-          SELECT
-            COUNT(product_id)::INTEGER
+          SELECT COUNT(product_id)::INTEGER
           FROM products_campaigns
           WHERE campaign_id = c.id
         ) AS product_count_in_campaign
@@ -72,15 +51,54 @@ class CampaignRepo extends ModelRepo_1.ModelRepo {
       SELECT
         product_id,
         campaign_id
-        FROM products_campaigns AS pc
-        WHERE pc.campaign_id IN (
+      FROM products_campaigns AS pc
+      WHERE pc.campaign_id IN (
           SELECT id
           FROM campaigns AS c
-          WHERE c.ends_at > CURRENT_TIMESTAMP AND c.starts_at < CURRENT_TIMESTAMP
+          WHERE
+            c.ends_at > CURRENT_TIMESTAMP
+            AND
+            c.starts_at < CURRENT_TIMESTAMP
           ORDER BY starts_at
           LIMIT 2
-        );
+      );
     `);
+            return result;
+        });
+    }
+    findDiscounts() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.query(`
+      SELECT
+        pc.product_id,
+        c.discount_percentage
+      FROM campaigns AS c
+      JOIN products_campaigns AS pc ON pc.campaign_id = c.id
+      WHERE
+        c.ends_at > CURRENT_TIMESTAMP
+        AND
+        c.starts_at < CURRENT_TIMESTAMP;
+    `);
+            return result;
+        });
+    }
+    findDiscountByProductId(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.query(`
+      SELECT
+        pc.product_id,
+        c.discount_percentage
+      FROM campaigns AS c
+      JOIN products_campaigns AS pc ON pc.campaign_id = c.id
+      WHERE
+        c.ends_at > CURRENT_TIMESTAMP
+        AND
+        c.starts_at < CURRENT_TIMESTAMP
+        AND
+        pc.product_id = $1
+      ORDER BY c.discount_percentage DESC
+      LIMIT 1;
+    `, [id]);
             return result;
         });
     }

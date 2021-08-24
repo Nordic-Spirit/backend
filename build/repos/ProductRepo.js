@@ -120,8 +120,8 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         p.name AS product_name,
         p.url AS product_url,
         p.price AS product_price,
-        c.id AS categorie_id,
-        c.name AS categorie_name,
+        c.id AS category_id,
+        c.name AS category_name,
         r.product_rating_avg,
         r.product_rating_count,
         EXISTS (
@@ -168,8 +168,8 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
         p.name AS product_name,
         p.url AS product_url,
         p.price AS product_price,
-        c.id AS categorie_id,
-        c.name AS categorie_name,
+        c.id AS category_id,
+        c.name AS category_name,
         r.product_rating_avg,
         r.product_rating_count,
         EXISTS (
@@ -200,11 +200,41 @@ class ProductRepo extends ModelRepo_1.ModelRepo {
             return result;
         });
     }
-    findCampaignProducts() {
+    findByCampaignId(campaignId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.query(`
-
-    `);
+      SELECT
+        p.id AS product_id,
+        p.name AS product_name,
+        p.url AS product_url,
+        p.price AS product_price,
+        c.id AS category_id,
+        c.name AS category_name,
+        EXISTS (
+          SELECT TRUE
+          FROM favorites
+          WHERE user_id = $2 AND product_id = p.id
+        ) AS is_favorite,
+        (
+          SELECT COUNT(*)::INTEGER
+          FROM products_in_storages
+          WHERE products_in_storages.product_id = p.id
+        ) AS products_in_storage
+      FROM products AS p
+      JOIN products_campaigns AS pc ON pc.product_id = p.id
+      JOIN categories AS c ON c.id = p.category_id
+      LEFT JOIN (
+        SELECT
+          product_id,
+          COUNT(*)::INTEGER AS product_rating_count,
+          ROUND(AVG(stars), 1)::DOUBLE PRECISION AS product_rating_avg
+        FROM ratings
+        GROUP BY product_id
+      ) AS r
+      ON r.product_id = p.id
+      WHERE pc.campaign_id = $1
+      ORDER BY p.created_at DESC;
+    `, [campaignId, userId]);
             return result;
         });
     }

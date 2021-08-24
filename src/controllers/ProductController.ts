@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { controller, get } from './decorators';
+import { bodyValidator, controller, get } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
 import { CampaignRepo } from '../repos/CampaignRepo';
@@ -14,7 +14,7 @@ class ProductController {
   // TODO - KESKEN
   @get('/')
   getProducts(req: Request, res: Response) {
-    const id = req.body.userId || null;
+    const userId: number | null = req.body.userId || null;
 
     ProductController.productRepo
       .find()
@@ -35,9 +35,9 @@ class ProductController {
   }
 
   @get('/single/:id')
-  getProduct(req: Request, res: Response) {
+  getByProductId(req: Request, res: Response) {
     const productId = Number(req.params.id);
-    const userId = req.body.userId || null;
+    const userId: number | null = req.body.userId || null;
 
     if (isNaN(productId)) {
       res
@@ -93,7 +93,7 @@ class ProductController {
 
   @get('/latest')
   getLatest(req: Request, res: Response) {
-    const userId = req.body.userId || null;
+    const userId: number | null = req.body.userId || null;
 
     Promise.all<ProductCardProps[], ProductDiscount[]>([
       ProductController.productRepo.findLatest(userId),
@@ -121,7 +121,7 @@ class ProductController {
 
   @get('/mostpopulars')
   getMostPopulars(req: Request, res: Response) {
-    const userId = parseInt(req.body.userId) || null;
+    const userId: number | null = req.body.userId || null;
 
     Promise.all<ProductCardProps[], ProductDiscount[]>([
       ProductController.productRepo.findMostPopulars(userId),
@@ -149,7 +149,7 @@ class ProductController {
 
   @get('/bestratings')
   getBestRatings(req: Request, res: Response) {
-    const userId = parseInt(req.body.userId) || null;
+    const userId: number | null = req.body.userId || null;
 
     Promise.all<ProductCardProps[], ProductDiscount[]>([
       ProductController.productRepo.findBestRatings(userId),
@@ -166,7 +166,35 @@ class ProductController {
           }
         });
       })
-      .catch(error => {});
+      .catch(error => {
+        res.status(422).send({ error });
+      });
+  }
+
+  @bodyValidator('campaignId')
+  @get('/bycampaignid')
+  getByCampaignId(req: Request, res: Response) {
+    const userId: number | null = req.body.userId || null;
+    const campaignId: number = req.body.campaignId;
+
+    Promise.all<ProductCardProps[], ProductDiscount[]>([
+      ProductController.productRepo.findByCampaignId(campaignId, userId),
+      ProductController.campaignRepo.findDiscounts()
+    ])
+      .then(result => {
+        const [_products, discounts] = result;
+
+        const products = ProductController.addDiscountRow(_products, discounts);
+
+        res.status(200).send({
+          data: {
+            products
+          }
+        });
+      })
+      .catch(error => {
+        res.status(422).send({ error });
+      });
   }
 
   static addDiscountRow(

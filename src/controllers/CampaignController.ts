@@ -14,10 +14,8 @@ class CampaignController {
 
   @get('/')
   getCampaigns(req: Request, res: Response) {
-    Promise.all<CampaignProps[], ProductCardProps[]>([
-      CampaignController.campaignRepo.findLatest(),
-      CampaignController.productRepo.findCampaignProducts()
-    ])
+    CampaignController.campaignRepo
+      .find()
       .then(result => {
         res.status(200).send({
           data: {
