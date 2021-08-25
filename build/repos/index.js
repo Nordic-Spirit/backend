@@ -14,3 +14,4 @@ __exportStar(require("./ProductRepo"), exports);
 __exportStar(require("./UserRepo"), exports);
 __exportStar(require("./CampaignRepo"), exports);
 __exportStar(require("./CategoryRepo"), exports);
+__exportStar(require("./BasketRepo"), exports);

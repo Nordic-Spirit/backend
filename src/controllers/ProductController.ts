@@ -93,6 +93,8 @@ class ProductController {
 
   @get('/latest')
   getLatest(req: Request, res: Response) {
+    console.log(req.session.id);
+
     const userId: number | null = req.body.userId || null;
 
     Promise.all<ProductCardProps[], ProductDiscount[]>([

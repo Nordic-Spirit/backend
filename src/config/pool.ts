@@ -1,6 +1,6 @@
 import { Pool, PoolConfig } from 'pg';
 
-const config: PoolConfig = {
+const databaseConfig: PoolConfig = {
   host: process.env.DATABASE_HOST,
   port: Number(process.env.DATABASE_PORT),
   database: process.env.DATABASE_NAME,
@@ -8,4 +8,4 @@ const config: PoolConfig = {
   password: process.env.DATABASE_PASSWORD
 };
 
-export default new Pool(config);
+export default new Pool(databaseConfig);

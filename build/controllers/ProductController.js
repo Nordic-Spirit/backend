@@ -74,6 +74,7 @@ let ProductController = ProductController_1 = class ProductController {
         });
     }
     getLatest(req, res) {
+        console.log(req.session.id);
         const userId = req.body.userId || null;
         Promise.all([
             ProductController_1.productRepo.findLatest(userId),

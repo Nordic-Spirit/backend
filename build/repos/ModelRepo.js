@@ -20,7 +20,7 @@ class ModelRepo {
     query(sql, params) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = yield pool_1.default.connect();
-            const result = pool_1.default
+            const result = client
                 .query(sql, params)
                 .then(({ rows }) => {
                 return this.toCamelCase(rows);

@@ -14,3 +14,4 @@ __exportStar(require("./CampaignController"), exports);
 __exportStar(require("./CategoryController"), exports);
 __exportStar(require("./ProductController"), exports);
 __exportStar(require("./UserController"), exports);
+__exportStar(require("./BasketController"), exports);

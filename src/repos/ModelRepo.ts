@@ -6,7 +6,7 @@ export class ModelRepo {
   async query<T>(sql: string, params?: any[]): Promise<T[]> {
     const client = await pool.connect();
 
-    const result = pool
+    const result = client
       .query(sql, params)
       .then(({ rows }) => {
         return this.toCamelCase<T>(rows);
