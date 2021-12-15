@@ -20,3 +20,13 @@ export interface ProductCardProps {
   productsInStorage: number;
   discountPercentage?: number;
 }
+
+export interface BasketProductProps {
+  productId: number;
+  productName: string;
+  productUrl: string;
+  productPrice: string;
+  productCount: number;
+}
+
+// ProductCard Price, alcoholpercent, countryofmanufacturer, manufacturer

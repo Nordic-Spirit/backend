@@ -8,7 +8,7 @@ const pgSession = connect(session);
 export const sessionConfig: SessionOptions = {
   store: new pgSession({
     pool: pgPool,
-    tableName: 'shopping_baskets'
+    tableName: 'sessions'
   }),
   saveUninitialized: true,
   secret: sessionSecret,

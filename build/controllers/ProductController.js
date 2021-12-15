@@ -15,6 +15,7 @@ const repos_1 = require("../repos");
 const CustomError_1 = require("../errors/CustomError");
 const CampaignRepo_1 = require("../repos/CampaignRepo");
 const errors_1 = require("../errors");
+const upload_1 = require("./utils/upload");
 let ProductController = ProductController_1 = class ProductController {
     // TODO - KESKEN
     getProducts(req, res) {
@@ -34,6 +35,9 @@ let ProductController = ProductController_1 = class ProductController {
                 .status(errors_1.ErrorResponseCodes._422)
                 .send({ name, message, sqlErrorCode });
         });
+    }
+    addProduct(req, res) {
+        const productDetails = req.body;
     }
     getByProductId(req, res) {
         const productId = Number(req.params.id);
@@ -74,7 +78,6 @@ let ProductController = ProductController_1 = class ProductController {
         });
     }
     getLatest(req, res) {
-        console.log(req.session.id);
         const userId = req.body.userId || null;
         Promise.all([
             ProductController_1.productRepo.findLatest(userId),
@@ -177,6 +180,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], ProductController.prototype, "getProducts", null);
+__decorate([
+    decorators_1.bodyValidator('name', 'description', 'price', 'alcohol', 'capacity', 'manufacturer', 'countryOfManufacturer', 'categorieId', 'subCategorieId', 'image'),
+    decorators_1.use(upload_1.upload.single('image')),
+    decorators_1.post('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], ProductController.prototype, "addProduct", null);
 __decorate([
     decorators_1.get('/single/:id'),
     __metadata("design:type", Function),

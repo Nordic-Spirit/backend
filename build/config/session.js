@@ -12,7 +12,7 @@ const pgSession = connect_pg_simple_1.default(express_session_1.default);
 exports.sessionConfig = {
     store: new pgSession({
         pool: pool_1.default,
-        tableName: 'shopping_baskets'
+        tableName: 'sessions'
     }),
     saveUninitialized: true,
     secret: _1.sessionSecret,

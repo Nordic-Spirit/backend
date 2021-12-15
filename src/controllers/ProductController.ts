@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
-import { bodyValidator, controller, get } from './decorators';
+import { bodyValidator, controller, use, get, post } from './decorators';
 import { ProductRepo } from '../repos';
 import { CustomError } from '../errors/CustomError';
 import { CampaignRepo } from '../repos/CampaignRepo';
 import { ProductProps, ProductDiscount, ProductCardProps } from '../interfaces';
 import { ErrorNames, ErrorResponseCodes } from '../errors';
+import { upload } from './utils/upload';
 
 @controller('/products')
 class ProductController {
@@ -32,6 +33,24 @@ class ProductController {
           .status(ErrorResponseCodes._422)
           .send({ name, message, sqlErrorCode });
       });
+  }
+
+  @bodyValidator(
+    'name',
+    'description',
+    'price',
+    'alcohol',
+    'capacity',
+    'manufacturer',
+    'countryOfManufacturer',
+    'categorieId',
+    'subCategorieId',
+    'image'
+  )
+  @use(upload.single('image'))
+  @post('/')
+  addProduct(req: Request, res: Response) {
+    const productDetails = req.body;
   }
 
   @get('/single/:id')
@@ -93,8 +112,6 @@ class ProductController {
 
   @get('/latest')
   getLatest(req: Request, res: Response) {
-    console.log(req.session.id);
-
     const userId: number | null = req.body.userId || null;
 
     Promise.all<ProductCardProps[], ProductDiscount[]>([

@@ -14,16 +14,50 @@ const decorators_1 = require("./decorators");
 const repos_1 = require("../repos");
 const errors_1 = require("../errors");
 let BasketController = BasketController_1 = class BasketController {
+    getCount(req, res) {
+        const sessionId = req.session.id;
+        BasketController_1.basketRepo
+            .findCount(sessionId)
+            .then(result => {
+            res.status(200).send({
+                data: {
+                    count: result
+                }
+            });
+        })
+            .catch(error => {
+            res.status(422).send({
+                error
+            });
+        });
+    }
+    getBasket(req, res) {
+        const sessionId = req.session.id;
+        BasketController_1.basketRepo
+            .findBySessionId(sessionId)
+            .then(result => {
+            res.status(200).send({
+                data: {
+                    products: result
+                }
+            });
+        })
+            .catch(error => {
+            res.status(422).send({ error });
+        });
+    }
     addProduct(req, res) {
         const productId = req.body.productId;
         const sessionId = req.session.id;
-        BasketController_1.basketRepo
-            .insert(sessionId, productId)
+        Promise.all([
+            BasketController_1.basketRepo.insert(sessionId, productId),
+            BasketController_1.basketRepo.findProductById(productId)
+        ])
             .then(result => {
-            console.log(result);
+            const [id, product] = result;
             res.status(200).send({
                 data: {
-                    result
+                    product
                 }
             });
         })
@@ -42,6 +76,19 @@ let BasketController = BasketController_1 = class BasketController {
     }
 };
 BasketController.basketRepo = new repos_1.BasketRepo();
+BasketController.productRepo = new repos_1.ProductRepo();
+__decorate([
+    decorators_1.get('/count'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], BasketController.prototype, "getCount", null);
+__decorate([
+    decorators_1.get('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], BasketController.prototype, "getBasket", null);
 __decorate([
     decorators_1.bodyValidator('productId'),
     decorators_1.post('/'),
