@@ -1,3 +1,2 @@
-# backend
-
-Backend written with nodeJS and express + typescript
+# nordic-spirit-backend-api-new-version
+New version of backend written by nestJs framework
