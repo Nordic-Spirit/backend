@@ -1,12 +1,12 @@
 const { MigrationInterface, QueryRunner, Table } = require('typeorm');
 
-module.exports = class tableSubcategory1643406738713 {
-  name = 'tableSubcategory1643406738713';
+module.exports = class tableCategory1643389933955 {
+  name = 'tableCategory1643389933955';
 
   async up(queryRunner) {
     await queryRunner.createTable(
       new Table({
-        name: 'subcategory',
+        name: 'categories',
         columns: [
           {
             name: 'id',
@@ -18,7 +18,8 @@ module.exports = class tableSubcategory1643406738713 {
           {
             name: 'name',
             type: 'varchar',
-            length: '30'
+            length: '30',
+            isUnique: true
           },
           {
             name: 'description',
@@ -27,33 +28,14 @@ module.exports = class tableSubcategory1643406738713 {
             isNullable: true
           },
           {
-            name: 'createdAt',
+            name: 'created_at',
             type: 'timestamp with time zone',
             default: 'current_timestamp'
           },
           {
-            name: 'updatedAt',
+            name: 'updated_at',
             type: 'timestamp with time zone',
             default: 'current_timestamp'
-          },
-          {
-            name: 'categoryId',
-            type: 'integer'
-          }
-        ],
-        foreignKeys: [
-          {
-            name: 'subcategory',
-            columnNames: ['categoryId'],
-            referencedTableName: 'category',
-            referencedColumnNames: ['id'],
-            onDelete: 'cascade'
-          }
-        ],
-        uniques: [
-          {
-            name: 'unique id + categoryId + name',
-            columnNames: ['id', 'categoryId', 'name']
           }
         ]
       })
@@ -61,6 +43,6 @@ module.exports = class tableSubcategory1643406738713 {
   }
 
   async down(queryRunner) {
-    await queryRunner.query(`DROP TABLE "sub_category"`);
+    await queryRunner.query(`DROP TABLE "categories"`);
   }
 };

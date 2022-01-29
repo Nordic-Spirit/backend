@@ -4,8 +4,8 @@ var dbConfig = {
   synchronize: false,
   migrations: ['migrations/*.js'],
   cli: {
-    migrationsDir: 'migrations',
-  },
+    migrationsDir: 'migrations'
+  }
 };
 
 switch (process.env.NODE_ENV) {
@@ -17,7 +17,7 @@ switch (process.env.NODE_ENV) {
       }:${parseInt(process.env.DB_PORT)}/${process.env.DB_NAME}`,
       // type: 'sqlite',
       // database: 'db.sqlite',
-      entities: ['**/*.entity.js'],
+      entities: ['**/*.entity.js']
     });
     break;
   case 'test':
@@ -25,7 +25,7 @@ switch (process.env.NODE_ENV) {
       type: 'postgres',
       //database: 'test.sqlite',
       entities: ['**/*.entity.ts'],
-      migrationsRun: true,
+      migrationsRun: true
     });
     break;
   case 'production':
@@ -35,8 +35,8 @@ switch (process.env.NODE_ENV) {
       migrationsRun: true,
       entities: ['**/*.entity.js'],
       ssl: {
-        rejectUnauthorized: false,
-      },
+        rejectUnauthorized: false
+      }
     });
     break;
   default:

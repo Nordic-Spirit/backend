@@ -5,9 +5,10 @@ import {
   ManyToOne,
   OneToMany
 } from 'typeorm';
+import { Product } from './product.entity';
 import { SubCategory } from './subcategory.entity';
 
-@Entity()
+@Entity({ name: 'categories' })
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,12 +19,15 @@ export class Category {
   @Column()
   description?: string;
 
-  @Column()
+  @Column({ name: 'created_at' })
   createdAt: Date;
 
-  @Column()
+  @Column({ name: 'updated_at' })
   updatedAt: Date;
 
   @OneToMany(() => SubCategory, subCategory => subCategory.category)
   subCategories: SubCategory[];
+
+  @OneToMany(() => Product, product => product.category)
+  products: Product[];
 }
