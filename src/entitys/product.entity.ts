@@ -6,7 +6,8 @@ import {
   ManyToMany,
   Index,
   JoinTable,
-  JoinColumn
+  JoinColumn,
+  Check
 } from 'typeorm';
 import { Category } from './category.entity';
 import { SubCategory } from './subcategory.entity';
@@ -17,42 +18,53 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'varchar', length: '50' })
   @Index()
-  @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: '200' })
   url: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: '240' })
   description: string;
 
-  @Column()
+  @Column({ type: 'double precision' })
+  @Check('price > 0')
   price: number;
 
-  @Column()
+  @Column({ type: 'double precision' })
   alcohol: number;
 
-  @Column()
+  @Column({ type: 'double precision' })
   capacity: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: '70' })
   manufacturer: string;
 
-  @Column({ name: 'country_of_manufacturer' })
+  @Column({ type: 'varchar', name: 'country_of_manufacturer', length: '50' })
   countryOfManufacturer: string;
 
+  @Column({ type: 'boolean', name: 'on_sale', default: true })
   @Index()
-  @Column({ name: 'on_sale' })
   onSale: boolean;
 
-  @Column({ name: 'created_at' })
+  @Column({
+    name: 'created_at',
+    type: 'timestamp with time zone',
+    default: 'current_timestamp'
+  })
   createdAt: Date;
 
-  @Column({ name: 'updated_at' })
+  @Column({
+    name: 'updated_at',
+    type: 'timestamp with time zone',
+    default: 'current_timestamp'
+  })
   updatedAt: Date;
 
-  @ManyToOne(() => Category, category => category.products)
+  @ManyToOne(() => Category, category => category.products, {
+    onDelete: 'RESTRICT'
+  })
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
   category: Category;
 
@@ -60,7 +72,9 @@ export class Product {
   @JoinColumn({ name: 'sub_category_id', referencedColumnName: 'id' })
   subCategory: SubCategory;
 
-  @ManyToMany(() => Campaign, campaign => campaign.products)
+  @ManyToMany(() => Campaign, campaign => campaign.products, {
+    onDelete: 'SET NULL'
+  })
   @JoinTable({
     name: 'products_campaigns',
     joinColumn: { name: 'product_id', referencedColumnName: 'id' },
