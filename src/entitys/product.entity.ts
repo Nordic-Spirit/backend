@@ -12,6 +12,8 @@ import {
 import { Category } from './category.entity';
 import { SubCategory } from './subcategory.entity';
 import { Campaign } from './campaign.entity';
+import { createdAtDefault } from './utils/createdAt';
+import { updatedAtDefault } from './utils/updatedAt';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -19,7 +21,7 @@ export class Product {
   id: number;
 
   @Column({ type: 'varchar', length: '50' })
-  @Index()
+  @Index('idx_products_name')
   name: string;
 
   @Column({ type: 'varchar', length: '200' })
@@ -29,7 +31,7 @@ export class Product {
   description: string;
 
   @Column({ type: 'double precision' })
-  @Check('price > 0')
+  @Check('chk_products_price', 'price > 0')
   price: number;
 
   @Column({ type: 'double precision' })
@@ -45,21 +47,13 @@ export class Product {
   countryOfManufacturer: string;
 
   @Column({ type: 'boolean', name: 'on_sale', default: true })
-  @Index()
+  @Index('idx_products_onSale')
   onSale: boolean;
 
-  @Column({
-    name: 'created_at',
-    type: 'timestamp with time zone',
-    default: 'current_timestamp'
-  })
+  @Column(createdAtDefault)
   createdAt: Date;
 
-  @Column({
-    name: 'updated_at',
-    type: 'timestamp with time zone',
-    default: 'current_timestamp'
-  })
+  @Column(updatedAtDefault)
   updatedAt: Date;
 
   @ManyToOne(() => Category, category => category.products, {

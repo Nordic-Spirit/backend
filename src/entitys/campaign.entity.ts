@@ -7,9 +7,11 @@ import {
   Check
 } from 'typeorm';
 import { Product } from './product.entity';
+import { updatedAtDefault } from './utils/updatedAt';
+import { createdAtDefault } from './utils/createdAt';
 
 @Entity({ name: 'campaigns' })
-@Check('ends_at > starts_at')
+@Check('chk_campaigns_endsAt_startsAt', 'ends_at > starts_at')
 export class Campaign {
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,25 +32,20 @@ export class Campaign {
   startsAt: Date;
 
   @Column({ name: 'ends_at', type: 'timestamp with time zone' })
-  @Index()
+  @Index('idx_campaigns_endsAt')
   endsAt: Date;
 
   @Column({ type: 'integer', name: 'discount_percentage' })
-  @Check('discount_percentage < 90 AND discount_percentage > 0')
+  @Check(
+    'chk_campaigns_discountPercentage',
+    'discount_percentage < 90 AND discount_percentage > 0'
+  )
   discountPercentage: number;
 
-  @Column({
-    name: 'created_at',
-    type: 'timestamp with time zone',
-    default: 'current_timestamp'
-  })
+  @Column(createdAtDefault)
   createdAt: Date;
 
-  @Column({
-    name: 'updated_at',
-    type: 'timestamp with time zone',
-    default: 'current_timestamp'
-  })
+  @Column(updatedAtDefault)
   updatedAt: Date;
 
   @ManyToMany(() => Product, product => product.campaigns)

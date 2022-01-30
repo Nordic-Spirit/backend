@@ -9,9 +9,11 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { Product } from './product.entity';
+import { createdAtDefault } from './utils/createdAt';
+import { updatedAtDefault } from './utils/updatedAt';
 
 @Entity({ name: 'sub_categories' })
-// @Unique('UQ_id-category_id-name', ['id', 'category_id', 'name'])
+@Unique('uq_subCategories_id_name_categoryId', ['id', 'name', 'category'])
 export class SubCategory {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,18 +24,10 @@ export class SubCategory {
   @Column({ type: 'varchar', length: '240', nullable: true })
   description?: string;
 
-  @Column({
-    name: 'created_at',
-    type: 'timestamp with time zone',
-    default: 'current_timestamp'
-  })
+  @Column(createdAtDefault)
   createdAt: Date;
 
-  @Column({
-    name: 'updated_at',
-    type: 'timestamp with time zone',
-    default: 'current_timestamp'
-  })
+  @Column(updatedAtDefault)
   updatedAt: Date;
 
   @ManyToOne(() => Category, category => category.subCategories, {
