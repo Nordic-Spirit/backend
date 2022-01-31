@@ -14,6 +14,7 @@ import { updatedAtDefault } from './utils/updatedAt';
 import { Rating } from './rating.entity';
 import { Favorite } from './favorite.entity';
 import { UsedCouponCode } from './usedcouponcode.entity';
+import { Order } from './order.entity';
 
 @Entity({ name: 'users' })
 @Unique('uq_users_phone', ['phone'])
@@ -61,4 +62,7 @@ export class User {
 
   @OneToMany(() => UsedCouponCode, usedCouponCode => usedCouponCode.user)
   usedCouponCodes: UsedCouponCode[];
+
+  @OneToMany(() => Order, order => order.user)
+  orders: Order[];
 }

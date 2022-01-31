@@ -17,6 +17,7 @@ import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
 import { Rating } from './rating.entity';
 import { Favorite } from './favorite.entity';
+import { Order } from './order.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -71,6 +72,12 @@ export class Product {
   @JoinColumn({ name: 'sub_category_id', referencedColumnName: 'id' })
   subCategory: SubCategory;
 
+  @OneToMany(() => Rating, rating => rating.product)
+  ratings: Rating[];
+
+  @OneToMany(() => Favorite, favorite => favorite.product)
+  favorites: Favorite[];
+
   @ManyToMany(() => Campaign, campaign => campaign.products, {
     onDelete: 'RESTRICT'
   })
@@ -81,9 +88,8 @@ export class Product {
   })
   campaigns: Campaign[];
 
-  @OneToMany(() => Rating, rating => rating.product)
-  ratings: Rating[];
-
-  @OneToMany(() => Favorite, favorite => favorite.product)
-  favorites: Favorite[];
+  @ManyToMany(() => Order, order => order.products, {
+    onDelete: 'RESTRICT'
+  })
+  orders: Order[];
 }

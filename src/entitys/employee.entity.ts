@@ -3,10 +3,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
+  OneToMany,
   JoinColumn,
   Unique
 } from 'typeorm';
 import { Location } from './location.entity';
+import { Order } from './order.entity';
 import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
 import { EmployeeRoleType } from './types/employee-role.type';
@@ -56,4 +58,7 @@ export class Employee {
     referencedColumnName: 'id'
   })
   location: Location;
+
+  @OneToMany(() => Order, order => order.employee)
+  orders: Order[];
 }
