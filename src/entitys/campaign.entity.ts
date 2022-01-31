@@ -48,6 +48,8 @@ export class Campaign {
   @Column(updatedAtDefault)
   updatedAt: Date;
 
-  @ManyToMany(() => Product, product => product.campaigns)
+  @ManyToMany(() => Product, product => product.campaigns, {
+    onDelete: 'RESTRICT'
+  })
   products: Product[];
 }

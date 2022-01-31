@@ -7,13 +7,16 @@ import {
   Index,
   JoinTable,
   JoinColumn,
-  Check
+  Check,
+  OneToMany
 } from 'typeorm';
 import { Category } from './category.entity';
 import { SubCategory } from './subcategory.entity';
 import { Campaign } from './campaign.entity';
 import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
+import { Rating } from './rating.entity';
+import { Favorite } from './favorite.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -62,12 +65,14 @@ export class Product {
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
   category: Category;
 
-  @ManyToOne(() => SubCategory, sub_category => sub_category.products)
+  @ManyToOne(() => SubCategory, sub_category => sub_category.products, {
+    onDelete: 'RESTRICT'
+  })
   @JoinColumn({ name: 'sub_category_id', referencedColumnName: 'id' })
   subCategory: SubCategory;
 
   @ManyToMany(() => Campaign, campaign => campaign.products, {
-    onDelete: 'SET NULL'
+    onDelete: 'RESTRICT'
   })
   @JoinTable({
     name: 'products_campaigns',
@@ -75,4 +80,10 @@ export class Product {
     inverseJoinColumn: { name: 'campaign_id', referencedColumnName: 'id' }
   })
   campaigns: Campaign[];
+
+  @OneToMany(() => Rating, rating => rating.product)
+  ratings: Rating[];
+
+  @OneToMany(() => Favorite, favorite => favorite.product)
+  favorites: Favorite[];
 }

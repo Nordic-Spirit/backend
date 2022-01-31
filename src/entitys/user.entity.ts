@@ -5,11 +5,15 @@ import {
   JoinColumn,
   Unique,
   OneToOne,
+  OneToMany,
   Index
 } from 'typeorm';
 import { Location } from './location.entity';
 import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
+import { Rating } from './rating.entity';
+import { Favorite } from './favorite.entity';
+import { UsedCouponCode } from './usedcouponcode.entity';
 
 @Entity({ name: 'users' })
 @Unique('uq_users_phone', ['phone'])
@@ -42,10 +46,19 @@ export class User {
   @Column(updatedAtDefault)
   updatedAt: Date;
 
-  @OneToOne(() => Location)
+  @OneToOne(() => Location, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'location_id',
     referencedColumnName: 'id'
   })
   location: Location;
+
+  @OneToMany(() => Rating, rating => rating.user)
+  ratings: Rating[];
+
+  @OneToMany(() => Favorite, favorite => favorite.user)
+  favorites: Favorite[];
+
+  @OneToMany(() => UsedCouponCode, usedCouponCode => usedCouponCode.user)
+  usedCouponCodes: UsedCouponCode[];
 }
