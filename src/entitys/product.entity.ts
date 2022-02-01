@@ -18,6 +18,8 @@ import { updatedAtDefault } from './utils/updatedAt';
 import { Rating } from './rating.entity';
 import { Favorite } from './favorite.entity';
 import { Order } from './order.entity';
+import { Session } from './session.entity';
+import { BasketProduct } from './basketproduct.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -77,6 +79,9 @@ export class Product {
 
   @OneToMany(() => Favorite, favorite => favorite.product)
   favorites: Favorite[];
+
+  @OneToMany(() => BasketProduct, basketProduct => basketProduct.product)
+  basketProducts: BasketProduct[];
 
   @ManyToMany(() => Campaign, campaign => campaign.products, {
     onDelete: 'RESTRICT'

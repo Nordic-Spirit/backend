@@ -8,10 +8,10 @@ export class Location {
   id: number;
 
   @Column({ type: 'varchar', length: '50', nullable: true })
-  country: string;
+  country?: string;
 
   @Column({ type: 'varchar', length: '85', nullable: true })
-  city: string;
+  city?: string;
 
   @Column({
     name: 'postal_code',
@@ -22,7 +22,7 @@ export class Location {
   postalCode: string;
 
   @Column({ type: 'varchar', length: '85', nullable: true })
-  address: string;
+  address?: string;
 
   @Column(createdAtDefault)
   createdAt: Date;

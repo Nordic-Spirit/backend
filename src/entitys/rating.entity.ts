@@ -24,7 +24,7 @@ export class Rating {
   stars: number;
 
   @Column({ type: 'varchar', length: '240', nullable: true })
-  description: string;
+  description?: string;
 
   @Column(createdAtDefault)
   createdAt: Date;

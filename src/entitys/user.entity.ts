@@ -47,12 +47,12 @@ export class User {
   @Column(updatedAtDefault)
   updatedAt: Date;
 
-  @OneToOne(() => Location, { onDelete: 'CASCADE' })
+  @OneToOne(() => Location, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({
     name: 'location_id',
     referencedColumnName: 'id'
   })
-  location: Location;
+  location?: Location;
 
   @OneToMany(() => Rating, rating => rating.user)
   ratings: Rating[];

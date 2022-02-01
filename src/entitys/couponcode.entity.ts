@@ -19,7 +19,7 @@ export class CouponCode {
   code: string;
 
   @Column({ type: 'varchar', nullable: true })
-  description: string;
+  description?: string;
 
   @Column({ name: 'discount_percentage', type: 'integer' })
   @Check(
