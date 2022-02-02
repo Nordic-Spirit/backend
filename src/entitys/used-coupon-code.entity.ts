@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm';
-import { CouponCode } from './couponcode.entity';
+import { CouponCode } from './coupon-code.entity';
 import { User } from './user.entity';
 import { createdAtDefault } from './utils/createdAt';
 

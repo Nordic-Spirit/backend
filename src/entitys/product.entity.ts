@@ -11,15 +11,14 @@ import {
   OneToMany
 } from 'typeorm';
 import { Category } from './category.entity';
-import { SubCategory } from './subcategory.entity';
+import { SubCategory } from './sub-category.entity';
 import { Campaign } from './campaign.entity';
 import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
 import { Rating } from './rating.entity';
 import { Favorite } from './favorite.entity';
 import { Order } from './order.entity';
-import { Session } from './session.entity';
-import { BasketProduct } from './basketproduct.entity';
+import { BasketProduct } from './basket-product.entity';
 
 @Entity({ name: 'products' })
 export class Product {

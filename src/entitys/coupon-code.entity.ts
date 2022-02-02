@@ -6,7 +6,7 @@ import {
   OneToMany,
   Index
 } from 'typeorm';
-import { UsedCouponCode } from './usedcouponcode.entity';
+import { UsedCouponCode } from './used-coupon-code.entity';
 import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
 

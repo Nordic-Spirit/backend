@@ -13,7 +13,7 @@ import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
 import { Rating } from './rating.entity';
 import { Favorite } from './favorite.entity';
-import { UsedCouponCode } from './usedcouponcode.entity';
+import { UsedCouponCode } from './used-coupon-code.entity';
 import { Order } from './order.entity';
 
 @Entity({ name: 'users' })

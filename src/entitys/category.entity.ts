@@ -6,7 +6,7 @@ import {
   Unique
 } from 'typeorm';
 import { Product } from './product.entity';
-import { SubCategory } from './subcategory.entity';
+import { SubCategory } from './sub-category.entity';
 import { createdAtDefault } from './utils/createdAt';
 import { updatedAtDefault } from './utils/updatedAt';
 

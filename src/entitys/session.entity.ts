@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryColumn, Index, OneToMany } from 'typeorm';
-import { BasketProduct } from './basketproduct.entity';
+import { BasketProduct } from './basket-product.entity';
 
 @Entity({ name: 'sessions' })
 export class Session {
