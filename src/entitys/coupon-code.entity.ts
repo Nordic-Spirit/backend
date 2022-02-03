@@ -7,8 +7,8 @@ import {
   Index
 } from 'typeorm';
 import { UsedCouponCode } from './used-coupon-code.entity';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { createdAtDefault } from './utils/created-at.util';
+import { updatedAtDefault } from './utils/updated-at.util';
 
 @Entity({ name: 'coupon_codes' })
 export class CouponCode {

@@ -2,21 +2,21 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToOne,
   OneToMany,
-  JoinColumn,
-  Unique
+  Unique,
+  ManyToMany
 } from 'typeorm';
 import { Location } from './location.entity';
 import { Order } from './order.entity';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { Storage } from './storage.entity';
+import { createdAtDefault } from './utils/created-at.util';
+import { updatedAtDefault } from './utils/updated-at.util';
 import { EmployeeRoleType } from './types/employee-role.type';
 
 @Entity({ name: 'employees' })
 @Unique('uq_employees_phone', ['phone'])
 @Unique('uq_employees_email', ['email'])
-export class Employee {
+export class Employee extends Location {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -52,13 +52,9 @@ export class Employee {
   @Column(updatedAtDefault)
   updatedAt: Date;
 
-  @OneToOne(() => Location, { onDelete: 'CASCADE' })
-  @JoinColumn({
-    name: 'location_id',
-    referencedColumnName: 'id'
-  })
-  location: Location;
-
   @OneToMany(() => Order, order => order.employee)
   orders: Order[];
+
+  @ManyToMany(() => Storage, storage => storage.employees)
+  storages: Storage[];
 }

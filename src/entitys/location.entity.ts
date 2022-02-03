@@ -1,12 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { Column } from 'typeorm';
 
-@Entity({ name: 'locations' })
-export class Location {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export abstract class Location {
   @Column({ type: 'varchar', length: '50', nullable: true })
   country?: string;
 
@@ -23,10 +17,4 @@ export class Location {
 
   @Column({ type: 'varchar', length: '85', nullable: true })
   address?: string;
-
-  @Column(createdAtDefault)
-  createdAt: Date;
-
-  @Column(updatedAtDefault)
-  updatedAt: Date;
 }

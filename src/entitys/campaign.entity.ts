@@ -7,8 +7,8 @@ import {
   Check
 } from 'typeorm';
 import { Product } from './product.entity';
-import { updatedAtDefault } from './utils/updatedAt';
-import { createdAtDefault } from './utils/createdAt';
+import { updatedAtDefault } from './utils/updated-at.util';
+import { createdAtDefault } from './utils/created-at.util';
 
 @Entity({ name: 'campaigns' })
 @Check('chk_campaigns_endsAt_startsAt', 'ends_at > starts_at')

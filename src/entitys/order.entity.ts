@@ -10,8 +10,8 @@ import {
 import { User } from './user.entity';
 import { Employee } from './employee.entity';
 import { OrderDeliveryStatusType } from './types/order-delivery-status.type';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { createdAtDefault } from './utils/created-at.util';
+import { updatedAtDefault } from './utils/updated-at.util';
 import { Product } from './product.entity';
 
 @Entity({ name: 'orders' })

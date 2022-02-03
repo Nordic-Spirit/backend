@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { CouponCode } from './coupon-code.entity';
 import { User } from './user.entity';
-import { createdAtDefault } from './utils/createdAt';
+import { createdAtDefault } from './utils/created-at.util';
 
 @Entity()
 export class UsedCouponCode {

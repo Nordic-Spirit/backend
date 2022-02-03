@@ -2,15 +2,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  JoinColumn,
   Unique,
-  OneToOne,
   OneToMany,
   Index
 } from 'typeorm';
 import { Location } from './location.entity';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { createdAtDefault } from './utils/created-at.util';
+import { updatedAtDefault } from './utils/updated-at.util';
 import { Rating } from './rating.entity';
 import { Favorite } from './favorite.entity';
 import { UsedCouponCode } from './used-coupon-code.entity';
@@ -18,7 +16,7 @@ import { Order } from './order.entity';
 
 @Entity({ name: 'users' })
 @Unique('uq_users_phone', ['phone'])
-export class User {
+export class User extends Location {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -46,13 +44,6 @@ export class User {
 
   @Column(updatedAtDefault)
   updatedAt: Date;
-
-  @OneToOne(() => Location, { onDelete: 'CASCADE', nullable: true })
-  @JoinColumn({
-    name: 'location_id',
-    referencedColumnName: 'id'
-  })
-  location?: Location;
 
   @OneToMany(() => Rating, rating => rating.user)
   ratings: Rating[];

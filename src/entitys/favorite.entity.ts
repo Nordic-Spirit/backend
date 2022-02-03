@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Product } from './product.entity';
 import { User } from './user.entity';
-import { createdAtDefault } from './utils/createdAt';
+import { createdAtDefault } from './utils/created-at.util';
 
 @Entity({ name: 'favorites' })
 @Unique('uq_favorites_userId_productId', ['user', 'product'])

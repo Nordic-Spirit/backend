@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 import { Product } from './product.entity';
 import { User } from './user.entity';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { createdAtDefault } from './utils/created-at.util';
+import { updatedAtDefault } from './utils/updated-at.util';
 
 @Entity({ name: 'ratings' })
 @Unique('uq_ratings', ['user', 'product'])

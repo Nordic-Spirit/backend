@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { Product } from './product.entity';
-import { createdAtDefault } from './utils/createdAt';
-import { updatedAtDefault } from './utils/updatedAt';
+import { createdAtDefault } from './utils/created-at.util';
+import { updatedAtDefault } from './utils/updated-at.util';
 
 @Entity({ name: 'sub_categories' })
 @Unique('uq_subCategories_id_name_categoryId', ['id', 'name', 'category'])

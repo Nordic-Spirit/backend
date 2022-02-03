@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Product } from './product.entity';
 import { Session } from './session.entity';
-import { createdAtDefault } from './utils/createdAt';
+import { createdAtDefault } from './utils/created-at.util';
 
 @Entity({ name: 'basket_products' })
 export class BasketProduct {
