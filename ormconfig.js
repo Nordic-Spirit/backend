@@ -1,7 +1,7 @@
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 
 var dbConfig = {
-  synchronize: false,
+  synchronize: true,
   migrations: ['migrations/*.js'],
   cli: {
     migrationsDir: 'migrations'

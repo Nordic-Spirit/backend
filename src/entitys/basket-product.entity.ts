@@ -17,11 +17,11 @@ export class BasketProduct {
   @Column(createdAtDefault)
   createdAt: Date;
 
-  @ManyToOne(() => Session, session => session.basketProducts, {
-    onDelete: 'CASCADE'
-  })
-  @JoinColumn({ name: 'session_sid', referencedColumnName: 'sid' })
-  session: Session;
+  // @ManyToOne(() => Session, session => session.basketProducts, {
+  //   onDelete: 'CASCADE'
+  // })
+  // @JoinColumn({ name: 'session_id', referencedColumnName: 'id' })
+  // session: Session;
 
   @ManyToOne(() => Product, product => product.basketProducts, {
     onDelete: 'RESTRICT'
